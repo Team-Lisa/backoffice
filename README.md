@@ -1,3 +1,18 @@
+# Production
+
+- [Backoffice web](https://backoffice-idomaplay.herokuapp.com/)
+
+# Requirements
+## Using docker
+
+* Docker
+
+## Using Node
+
+* Node 11.15.0
+* npm 7.20.1
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

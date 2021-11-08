@@ -181,8 +181,8 @@ const ContentManager = () => {
                                                 <Grid style={{marginTop:"3%", marginLeft:"5%"}}>
                                                     <TextField
                                                         style={{width:"80%"}}
-                                                        label="Pregunta"
-                                                        name="Pregunta"
+                                                        label="Pregunta/Link Audio"
+                                                        name="Pregunta/Link Audio"
                                                         size="small"
                                                         variant="outlined"
                                                         placeholder="Pregunta"
