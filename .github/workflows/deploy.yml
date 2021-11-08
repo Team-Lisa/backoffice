@@ -4,16 +4,16 @@ on:
 
 
 jobs:
-  deploy:
+  build_deploy_production:
+    if: github.ref == 'master'
+    needs: tests
     runs-on: ubuntu-latest
     steps:
-
       - uses: actions/checkout@v2
-      - uses: akhileshns/heroku-deploy@v3.4.6
+      - uses: akhileshns/heroku-deploy@v3.5.7 # This is the action
         with:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }} # your  heroku api key
           heroku_app_name: ${{ secrets.HEROKU_APP_NAME }} # you aplication name
           heroku_email: ${{ secrets.HEROKU_EMAIL }} # your heroku email
+          usedocker: true
 
-      - name: Run a one-line script
-        run: echo successfully run
