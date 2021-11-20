@@ -1,21 +1,20 @@
 import Button from "@material-ui/core/Button";
 import React from "react";
-import {Redirect, useHistory} from "react-router-dom";
 
-export default function LessonTile({data}) {
-  const actualColor = localStorage.getItem('actualColor');
-  const history = useHistory();
+export default function ExerciseTile({data}) {
+  const color = data["exercise_type"] === 'TranslateToOriginal' ? '#CAA7F3' : data["exercise_type"] === 'TranslateToNew' ? '#C4FEAC' : data["exercise_type"] === 'Listening' ? '#FED178' : '#93D9F8';
+
 
   const handleClick = () => {
     //localStorage.setItem("actualUnitData", JSON.stringify(data));
-    history.push('/exercise')
+    //history.push('/lessons')
   };
 
   return (
     <div style={{
       width: '97%',
       height: 80,
-      backgroundColor: actualColor,
+      backgroundColor: color,
       borderRadius: 20,
       display: 'flex',
       alignItems: 'center',
@@ -23,10 +22,10 @@ export default function LessonTile({data}) {
       margin: '20px'
     }}>
       <h2 style={{fontFamily: 'Montserrat', color: '#203F58', width: "70%"}}>
-        {data.name}
+        {data.question}
       </h2>
       <h4 style={{fontFamily: 'Montserrat', color: '#203F58'}}>
-        {0} Ejercicios
+        {data.options.length} opciones
       </h4>
       <div>
         <Button variant="contained" style={{
@@ -36,7 +35,7 @@ export default function LessonTile({data}) {
           width: 150,
           fontFamily: 'Montserrat',
         }} onClick={handleClick}>
-          Ver
+          Editar
         </Button>
       </div>
     </div>

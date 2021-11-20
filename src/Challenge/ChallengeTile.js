@@ -40,7 +40,7 @@ export default function ChallengeTile({color, data}) {
 
   return (
     <div style={{
-      width: '100%',
+      width: '97%',
       height: 80,
       backgroundColor: color,
       borderRadius: 20,
@@ -52,7 +52,7 @@ export default function ChallengeTile({color, data}) {
       <h2 style={{fontFamily: 'Montserrat', color: '#203F58', width: "60%"}}>
         Desafio {data['challenge_id'][1]} - {data.name}
       </h2>
-      <h4 style={{fontFamily: 'Montserrat'}}>
+      <h4 style={{fontFamily: 'Montserrat', color: '#203F58'}}>
         {data.units.length} Unidades
       </h4>
       <div>

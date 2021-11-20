@@ -7,13 +7,43 @@ const ContentManager = () => {
 
   const header = () => {
     return (
-      <div style={{width: '90%', height: 80, paddingBottom: 20, alignItems: 'center', margin: 20}}>
+      <div style={{
+        width: '100%',
+        height: 80,
+        paddingBottom: 20,
+        marginLeft: 20,
+        marginRight: 20,
+        alignItems: 'center',
+        position: 'fixed',
+        top: 0,
+        backgroundColor: 'rgba(255,255,255,0.9)'
+      }}>
         <div style={{justifyContent: 'center', display: 'inline'}}>
           <h1 style={{fontFamily: 'Work Sans', color: '#203F58', fontSize: 42, marginBottom: 0, paddingTop: 10}}>
             Desafíos
           </h1>
         </div>
       </div>
+    )
+  }
+
+  const addButtonBottom = () => {
+    return (
+      <Button variant={'contained'}
+              style={{
+                color: '#CEEDE8',
+                backgroundColor: '#203F58',
+                borderRadius: 50,
+                width: 60,
+                height: 62,
+                fontSize: 35,
+                fontFamily: 'Montserrat',
+                position: 'fixed',
+                bottom: 20,
+                right: 20
+              }}>
+        +
+      </Button>
     )
   }
 
@@ -105,16 +135,21 @@ const ContentManager = () => {
 
   return (
     <div>
+      <div style={{paddingBottom: 80, paddingTop: 100}}>
+        {data.map((value, index) => {
+          let color = actualColor;
+          if (index !== 0) {
+            color = getColor(color);
+          }
+          return (
+            <div>
+              <ChallengeTile color={color} key={index} data={value}/>
+            </div>
+          )
+        })}
+      </div>
       {header()}
-      {data.map((value, index) => {
-        let color = actualColor;
-        if (index !== 0) {
-          color = getColor(color);
-        }
-        return (
-          <ChallengeTile color={color} key={index} data={value}/>
-        )
-      })}
+      {addButtonBottom()}
     </div>
 
   )

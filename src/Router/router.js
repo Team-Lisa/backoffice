@@ -10,6 +10,7 @@ import SideNav, {Toggle, Nav, NavItem, NavIcon, NavText} from '@trendmicro/react
 import '@trendmicro/react-sidenav/dist/react-sidenav.css';
 import UnitScreen from "../Units/UnitScreen";
 import LessonScreen from "../Lessons/LessonScreen";
+import ExercisesScreen from "../Exercises/ExercisesScreen";
 
 const RouterCustom = () => {
   return (
@@ -18,7 +19,7 @@ const RouterCustom = () => {
         <Route render={({location, history}) => (
           <React.Fragment>
             <SideNav
-              style={{background: "#203F58", width: "3%", height: '100%'}}
+              style={{background: "#203F58", width: "3%", height: '100%', position: 'fixed'}}
               onSelect={(selected) => {
                 const logged_storage = localStorage.getItem('logged');
                 if (logged_storage === "true") {
@@ -60,6 +61,7 @@ const RouterCustom = () => {
               <Route exact path="/content" component={ContentManager}/>
               <Route exact path="/units" component={UnitScreen}/>
               <Route exact path="/lessons" component={LessonScreen}/>
+              <Route exact path="/exercise" component={ExercisesScreen}/>
             </main>
           </React.Fragment>
         )}

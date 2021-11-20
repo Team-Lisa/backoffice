@@ -11,7 +11,7 @@ export default function UnitsTile({color, data}) {
 
   return (
     <div style={{
-      width: '100%',
+      width: '97%',
       height: 80,
       backgroundColor: color,
       borderRadius: 20,
@@ -23,7 +23,7 @@ export default function UnitsTile({color, data}) {
       <h2 style={{fontFamily: 'Montserrat', color: '#203F58', width: "70%"}}>
         {data.name}
       </h2>
-      <h4 style={{fontFamily: 'Montserrat'}}>
+      <h4 style={{fontFamily: 'Montserrat', color: '#203F58'}}>
         {data.lessons.length} Lecciones
       </h4>
       <div>
