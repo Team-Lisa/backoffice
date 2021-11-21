@@ -13,12 +13,11 @@ const ContentManager = () => {
         paddingBottom: 20,
         marginLeft: 20,
         marginRight: 20,
-        alignItems: 'center',
         position: 'fixed',
         top: 0,
         backgroundColor: 'rgba(255,255,255,0.9)'
       }}>
-        <div style={{justifyContent: 'center', display: 'inline'}}>
+        <div>
           <h1 style={{fontFamily: 'Work Sans', color: '#203F58', fontSize: 42, marginBottom: 0, paddingTop: 10}}>
             Desafíos
           </h1>
@@ -49,7 +48,7 @@ const ContentManager = () => {
 
   const colors = ['#FED178', '#CAA7F3', '#C4FEAC', '#93D9F8'];
 
-  const data = [
+  let data = [
     {
       "name": "Básico 1.0",
       "units": [

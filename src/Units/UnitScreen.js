@@ -10,6 +10,8 @@ export default function UnitScreen() {
   const units = actualData.units;
   const onChangeSubtitle = (event) => {
     setSubtitle(event.target.value);
+    actualData.name = event.target.value;
+    localStorage.setItem("actualData", JSON.stringify(actualData));
   }
 
   const header = () => {
@@ -20,18 +22,17 @@ export default function UnitScreen() {
         paddingBottom: 20,
         marginLeft: 20,
         marginRight: 20,
-        alignItems: 'center',
         position: 'fixed',
         top: 0,
         backgroundColor: 'rgba(255,255,255,0.9)'
       }}>
-        <div style={{justifyContent: 'center', display: 'inline'}}>
+        <div>
           <div style={{display: 'flex', alignItems: 'center'}}>
             <h1 style={{fontFamily: 'Work Sans', color: '#203F58', fontSize: 42, marginBottom: 0, paddingBottom: 10}}>
               Desafío {actualData['challenge_id'][1]} -
             </h1>
             <TextField
-              style={{width: "30%", marginTop: 30}}
+              style={{width: "30%", marginTop: 30, alignItems: 'flex-start'}}
               inputProps={{style: {fontFamily: 'Work Sans', color: '#203F58', fontSize: 42, fontWeight: 700}}}
               InputLabelProps={{style: {fontFamily: 'Work Sans', color: '#203F58', fontSize: 42, fontWeight: 700}}}
               size="small"

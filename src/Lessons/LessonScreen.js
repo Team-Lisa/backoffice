@@ -13,6 +13,8 @@ export default function LessonScreen() {
 
   const onChangeSubtitle = (event) => {
     setSubtitle(event.target.value);
+    actualUnitData.name = event.target.value;
+    localStorage.setItem("actualUnitData", JSON.stringify(actualUnitData));
   }
 
 
@@ -34,7 +36,7 @@ export default function LessonScreen() {
             Desafío {actualData['challenge_id'][1]} - {actualData.name}
           </h1>
           <TextField
-            style={{width: "30%", marginTop: 0}}
+            style={{width: "30%", marginTop: 0, alignItems: 'flex-start'}}
             inputProps={{style: {fontFamily: 'Montserrat', color: '#203F58', fontWeight: 700}}}
             InputLabelProps={{style: {fontFamily: 'Montserrat', color: '#203F58', fontWeight: 700}}}
             size="small"
@@ -52,8 +54,8 @@ export default function LessonScreen() {
     return (
       <Button variant={'contained'}
               style={{
-                color: '#CEEDE8',
-                backgroundColor: '#203F58',
+                color: '#203F58',
+                backgroundColor: actualColor,
                 borderRadius: 50,
                 width: 60,
                 height: 62,
