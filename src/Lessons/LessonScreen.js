@@ -36,7 +36,7 @@ export default function LessonScreen() {
             Desafío {actualData['challenge_id'][1]} - {actualData.name}
           </h1>
           <TextField
-            style={{width: "30%", marginTop: 0, alignItems: 'flex-start'}}
+            style={{width: "30%", marginTop: 0}}
             inputProps={{style: {fontFamily: 'Montserrat', color: '#203F58', fontWeight: 700}}}
             InputLabelProps={{style: {fontFamily: 'Montserrat', color: '#203F58', fontWeight: 700}}}
             size="small"

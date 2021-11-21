@@ -67,8 +67,7 @@ const ContentManager = () => {
           "id": "U1"
         }
       ],
-      "challenge_id": "D1",
-      "publish": true
+      "challenge_id": "D1"
     },
     {
       "name": "Básico 2.0",
