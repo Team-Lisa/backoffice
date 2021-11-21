@@ -2,8 +2,10 @@ import React, {useState} from "react";
 import Button from "@material-ui/core/Button";
 import ExerciseTile from "./ExerciseTile";
 import Modal from "react-modal";
-import {ButtonGroup} from "@material-ui/core";
+import {ButtonGroup, IconButton} from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import {useHistory} from "react-router-dom";
 
 const data = [
   {
@@ -67,6 +69,7 @@ const data = [
 ]
 
 export default function ExercisesScreen() {
+  const history = useHistory();
   const actualData = JSON.parse(localStorage.getItem('actualData'));
   const actualUnitData = JSON.parse(localStorage.getItem('actualUnitData'));
   const [completeButton, setCompleteButton] = useState('white');
@@ -146,12 +149,23 @@ export default function ExercisesScreen() {
     setToOriginal('white')
   }
 
+  const handleBack = () => {
+    history.push('/lessons')
+  }
+
   const header = () => {
     return (
       <div style={styles.headerDiv}>
-        <h1 style={styles.headerTitle}>
-          Desafío {actualData['challenge_id'][1]} - {actualData.name}
-        </h1>
+        <div style={{display: 'flex'}}>
+          <div style={{paddingTop: 30}}>
+            <IconButton style={{padding: 0, margin: 0}} onClick={handleBack}>
+              <ChevronLeftIcon fontSize="inherit" style={{height: 50, width: 50, color: '#203F58'}}/>
+            </IconButton>
+          </div>
+          <h1 style={styles.headerTitle}>
+            Desafío {actualData['challenge_id'][1]} - {actualData.name}
+          </h1>
+        </div>
         <h3 style={styles.headerSubtitle}>
           {actualUnitData.name} - Lección {1}
         </h3>
@@ -480,13 +494,11 @@ const styles = {
     width: '100%',
     height: 80,
     paddingBottom: 20,
-    marginLeft: 20,
-    marginRight: 20,
     alignItems: 'center',
     position: 'fixed',
     top: 0,
     backgroundColor: 'rgba(255,255,255,0.9)'
   },
   headerTitle: {fontFamily: 'Work Sans', color: '#203F58', fontSize: 42, marginBottom: 0},
-  headerSubtitle: {fontFamily: 'Montserrat', color: '#203F58', fontWeight: 700, marginTop: 0}
+  headerSubtitle: {fontFamily: 'Montserrat', color: '#203F58', fontWeight: 700, marginTop: 0, paddingLeft: 50}
 }
