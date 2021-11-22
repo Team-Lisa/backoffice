@@ -20,4 +20,13 @@ const createLesson = (lesson) => {
     console.log(lesson_to_save);
 }
 
+export const getChallenges = () => {
+    return fetch('https://idiomaplay-gateway.herokuapp.com/challenges')
+        .then(response => response.json())
+        .then(data =>{
+            let challenges = data["challenges"];
+            return challenges;
+        });
+}
+
 export default createLesson;
