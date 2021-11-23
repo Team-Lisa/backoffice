@@ -1,13 +1,15 @@
 import Button from "@material-ui/core/Button";
 import React from "react";
 import {Redirect, useHistory} from "react-router-dom";
+import {getExercises} from "../Communication/challenge_controller";
 
 export default function LessonTile({data}) {
   const actualColor = localStorage.getItem('actualColor');
   const history = useHistory();
 
-  const handleClick = () => {
-    //localStorage.setItem("actualUnitData", JSON.stringify(data));
+  const handleClick = async () => {
+    let exercises = await getExercises(data.id);
+    localStorage.setItem("exercises", JSON.stringify(exercises));
     history.push('/exercise')
   };
 

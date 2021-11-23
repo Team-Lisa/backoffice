@@ -52,74 +52,14 @@ const ContentManager = () => {
 
   useEffect(() => {
     async function loadChallenges(){
-      let challenges_to_load = await getChallenges();
-      setChallenges(challenges_to_load);
+      if (challenges.length === 0){
+        let challenges_to_load = await getChallenges();
+        setChallenges(challenges_to_load);
+      }
+
     }
     loadChallenges()
   }, [challenges])
-  console.log(challenges);
-  let data = [
-    {
-      "name": "Básico 1.0",
-      "units": [
-        {
-          "name": "Introducción",
-          "exam": {
-            "id": "E1",
-            "duration": 960
-          },
-          "lessons": [
-            {
-              "name": "Lección 1",
-              "id": "L1"
-            }
-          ],
-          "id": "U1"
-        }
-      ],
-      "challenge_id": "D1"
-    },
-    {
-      "name": "Básico 2.0",
-      "units": [
-        {
-          "name": "Comparativo/Superlativo",
-          "exam": {
-            "id": "E2",
-            "duration": 5
-          },
-          "lessons": [
-            {
-              "name": "Lección 1",
-              "id": "L2"
-            }
-          ],
-          "id": "U2"
-        }
-      ],
-      "challenge_id": "D2"
-    },
-    {
-      "name": "Intermedio",
-      "units": [
-        {
-          "name": "Condicional 1",
-          "exam": {
-            "id": "E3",
-            "duration": 960
-          },
-          "lessons": [
-            {
-              "name": "Lección 1",
-              "id": "L3"
-            }
-          ],
-          "id": "U3"
-        }
-      ],
-      "challenge_id": "D3"
-    }
-  ]
 
   const YELLOW = '#FED178';
   const PURPLE = '#CAA7F3';
@@ -140,7 +80,6 @@ const ContentManager = () => {
     return actualColor;
   }
 
-
   return (
     <div>
       {(challenges.length > 0)?
@@ -157,7 +96,7 @@ const ContentManager = () => {
               )
             })}
           </div>
-          :""}
+          : ""}
 
       {header()}
       {addButtonBottom()}

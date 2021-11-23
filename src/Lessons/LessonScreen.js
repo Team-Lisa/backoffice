@@ -13,7 +13,7 @@ export default function LessonScreen() {
   const actualUnitData = JSON.parse(localStorage.getItem('actualUnitData'));
   const [subtitle, setSubtitle] = useState(actualUnitData.name);
   const history = useHistory();
-  const lessons = actualUnitData['lessons']
+  const lessons = actualUnitData['lessons'];
 
   const onChangeSubtitle = (event) => {
     setSubtitle(event.target.value);
