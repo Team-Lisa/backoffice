@@ -6,6 +6,7 @@ import ExamTile from "./ExamTile";
 import {IconButton} from "@material-ui/core";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import {useHistory} from "react-router-dom";
+import Loading from "../Loading/Loading";
 
 export default function LessonScreen() {
   const actualColor = localStorage.getItem('actualColor');

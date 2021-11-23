@@ -16,6 +16,7 @@
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
     "@trendmicro/react-sidenav": "^0.5.0",
+    "assets": "^3.0.1",
     "classnames": "^2.3.1",
     "express": "^4.17.1",
     "express-favicon": "^2.0.1",
