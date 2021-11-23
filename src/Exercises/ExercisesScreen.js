@@ -26,7 +26,7 @@ export default function ExercisesScreen() {
   const [openModal, setOpenModal] = useState(false);
 
   let data = JSON.parse(localStorage.getItem("exercises"));
-
+  let lesson_or_exam = localStorage.getItem("lesson_or_exam");
   const buttonHandle = (number) => {
     setCorrect(number);
   }
@@ -108,7 +108,7 @@ export default function ExercisesScreen() {
           </h1>
         </div>
         <h3 style={styles.headerSubtitle}>
-          {actualUnitData.name} - Lección {1}
+          {actualUnitData.name} - {lesson_or_exam}
         </h3>
       </div>
     )

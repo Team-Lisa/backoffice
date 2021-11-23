@@ -30,8 +30,16 @@ export const getChallenges = () => {
         });
 }
 
-export const getExercises = (lesson_id) => {
+export const getLessonExercises = (lesson_id) => {
     return fetch(url+"lessons/"+ lesson_id + "/exercises")
+        .then(response => response.json())
+        .then(data =>{
+            return data["exercises"];
+        });
+}
+
+export const getExamExercises = (exam_id) => {
+    return fetch(url+"exams/"+ exam_id + "/exercises")
         .then(response => response.json())
         .then(data =>{
             return data["exercises"];

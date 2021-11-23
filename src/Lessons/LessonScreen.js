@@ -14,7 +14,7 @@ export default function LessonScreen() {
   const [subtitle, setSubtitle] = useState(actualUnitData.name);
   const history = useHistory();
   const lessons = actualUnitData['lessons'];
-
+  const exam = actualUnitData["exam"]
   const onChangeSubtitle = (event) => {
     setSubtitle(event.target.value);
     actualUnitData.name = event.target.value;
@@ -97,7 +97,7 @@ export default function LessonScreen() {
           }}>
             Examen
           </h2>
-          <ExamTile/>
+          <ExamTile data={exam}/>
         </div>
         <div>
           <h2 style={{
