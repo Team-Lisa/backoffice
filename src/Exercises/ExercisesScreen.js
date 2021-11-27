@@ -6,6 +6,8 @@ import {ButtonGroup, IconButton} from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import {useHistory} from "react-router-dom";
+import {Add} from "@material-ui/icons";
+import SaveIcon from "@mui/icons-material/Save";
 
 export default function ExercisesScreen() {
   const history = useHistory();
@@ -326,16 +328,24 @@ export default function ExercisesScreen() {
     )
   }
 
-  const addButtonBottom = () => {
+  const addButtonButton = () => {
     return (
-      <Button variant={'contained'}
-              style={styles.addButton}
-              onClick={() => {
-                setOpenModal(true);
-              }}
-      >
-        +
-      </Button>
+      <IconButton
+        style={{padding: 15, margin: 15, position: 'fixed', bottom: 10, right: 10, backgroundColor: '#203F58'}}
+        onClick={() => {
+          setOpenModal(true);
+        }}>
+        <Add fontSize="inherit" style={{height: 30, width: 30, color: '#CEEDE8'}}/>
+      </IconButton>
+    )
+  }
+
+  const saveButton = () => {
+    return (
+      <IconButton
+        style={{padding: 15, margin: 15, position: 'fixed', bottom: 80, right: 10, backgroundColor: '#203F58'}}>
+        <SaveIcon fontSize="inherit" style={{height: 30, width: 30, color: '#CEEDE8'}}/>
+      </IconButton>
     )
   }
 
@@ -349,7 +359,8 @@ export default function ExercisesScreen() {
         })}
       </div>
       {header()}
-      {addButtonBottom()}
+      {addButtonButton()}
+      {saveButton()}
       {newExercise()}
     </div>
   );

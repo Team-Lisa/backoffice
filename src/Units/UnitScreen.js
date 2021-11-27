@@ -5,6 +5,8 @@ import Button from "@material-ui/core/Button";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import {IconButton} from "@material-ui/core";
 import {useHistory} from "react-router-dom";
+import {Add} from "@material-ui/icons";
+import SaveIcon from "@mui/icons-material/Save";
 
 export default function UnitScreen() {
   const actualColor = localStorage.getItem('actualColor');
@@ -59,23 +61,21 @@ export default function UnitScreen() {
     )
   }
 
-  const addButtonBottom = () => {
+  const addButtonButton = () => {
     return (
-      <Button variant={'contained'}
-              style={{
-                color: '#203F58',
-                backgroundColor: actualColor,
-                borderRadius: 50,
-                width: 60,
-                height: 62,
-                fontSize: 35,
-                fontFamily: 'Montserrat',
-                position: 'fixed',
-                bottom: 20,
-                right: 20
-              }}>
-        +
-      </Button>
+      <IconButton
+        style={{padding: 15, margin: 15, position: 'fixed', bottom: 10, right: 10, backgroundColor: actualColor}}>
+        <Add fontSize="inherit" style={{height: 30, width: 30, color: '#203F58'}}/>
+      </IconButton>
+    )
+  }
+
+  const saveButton = () => {
+    return (
+      <IconButton
+        style={{padding: 15, margin: 15, position: 'fixed', bottom: 80, right: 10, backgroundColor: actualColor}}>
+        <SaveIcon fontSize="inherit" style={{height: 30, width: 30, color: '#203F58'}}/>
+      </IconButton>
     )
   }
 
@@ -91,7 +91,8 @@ export default function UnitScreen() {
         })}
       </div>
       {header()}
-      {addButtonBottom()}
+      {addButtonButton()}
+      {saveButton()}
     </div>
   );
 }

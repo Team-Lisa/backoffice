@@ -4,6 +4,9 @@ import ChallengeTile from "../../Challenge/ChallengeTile";
 import {getChallenges} from "../../Communication/challenge_controller";
 import Loader from "react-loader-spinner";
 import Loading from "../../Loading/Loading";
+import SaveIcon from "@mui/icons-material/Save";
+import {IconButton} from "@material-ui/core";
+import {Add} from "@material-ui/icons";
 
 
 const ContentManager = () => {
@@ -30,23 +33,21 @@ const ContentManager = () => {
     )
   }
 
-  const addButtonBottom = () => {
+  const addButtonButton = () => {
     return (
-      <Button variant={'contained'}
-              style={{
-                color: '#CEEDE8',
-                backgroundColor: '#203F58',
-                borderRadius: 50,
-                width: 60,
-                height: 62,
-                fontSize: 35,
-                fontFamily: 'Montserrat',
-                position: 'fixed',
-                bottom: 20,
-                right: 20
-              }}>
-        +
-      </Button>
+      <IconButton
+        style={{padding: 15, margin: 15, position: 'fixed', bottom: 10, right: 10, backgroundColor: '#203F58'}}>
+        <Add fontSize="inherit" style={{height: 30, width: 30, color: '#CEEDE8'}}/>
+      </IconButton>
+    )
+  }
+
+  const saveButton = () => {
+    return (
+      <IconButton
+        style={{padding: 15, margin: 15, position: 'fixed', bottom: 80, right: 10, backgroundColor: '#203F58'}}>
+        <SaveIcon fontSize="inherit" style={{height: 30, width: 30, color: '#CEEDE8'}}/>
+      </IconButton>
     )
   }
 
@@ -102,7 +103,8 @@ const ContentManager = () => {
         : <Loading color={'#203F58'}/>}
 
       {header()}
-      {addButtonBottom()}
+      {addButtonButton()}
+      {saveButton()}
     </div>
   )
 }
