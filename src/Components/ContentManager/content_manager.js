@@ -1,17 +1,20 @@
 import React, {useEffect, useState} from "react";
 import Button from "@material-ui/core/Button";
 import ChallengeTile from "../../Challenge/ChallengeTile";
-import {getChallenges} from "../../Communication/challenge_controller";
+import {getChallenges, getNextChallengeId} from "../../Communication/challenge_controller";
 import Loader from "react-loader-spinner";
 import Loading from "../../Loading/Loading";
 import SaveIcon from "@mui/icons-material/Save";
 import {IconButton} from "@material-ui/core";
 import {Add} from "@material-ui/icons";
+import {useHistory} from "react-router-dom";
+import ChallengeModel from "../../Models/Challenge";
 
 
 const ContentManager = () => {
   const [challenges, setChallenges] = useState([]);
-
+  const [waiting, setWaiting]  = useState(false);
+  const history = useHistory();
   const header = () => {
     return (
       <div style={{
@@ -36,7 +39,21 @@ const ContentManager = () => {
   const addButtonButton = () => {
     return (
       <IconButton
-        style={{padding: 15, margin: 15, position: 'fixed', bottom: 10, right: 10, backgroundColor: '#203F58'}}>
+        style={{padding: 15, margin: 15, position: 'fixed', bottom: 10, right: 10, backgroundColor: '#203F58'}}
+        onClick={
+            async () => {
+                setWaiting(true);
+                let next_id = await getNextChallengeId();
+                setWaiting(false);
+                let challenge = new ChallengeModel("Nuevo Desafio", [], next_id, false);
+                challenge.save();
+
+                let color_index = (challenges.length % colors.length) !== 0 ? (challenges.length % colors.length) - 1 : colors.length - 1;
+
+                localStorage.setItem("actualColor", colors[color_index]);
+                history.push('/units')
+            }
+        }>
         <Add fontSize="inherit" style={{height: 30, width: 30, color: '#CEEDE8'}}/>
       </IconButton>
     )
@@ -101,7 +118,7 @@ const ContentManager = () => {
           })}
         </div>
         : <Loading color={'#203F58'}/>}
-
+      {waiting ? <Loading color={'#203F58'}/> : ""}
       {header()}
       {addButtonButton()}
       {saveButton()}

@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import TextField from "@material-ui/core/TextField";
 import LessonTile from "./LessonTile";
 import Button from "@material-ui/core/Button";
@@ -9,11 +9,13 @@ import {useHistory} from "react-router-dom";
 import Loading from "../Loading/Loading";
 import {Add} from "@material-ui/icons";
 import SaveIcon from "@mui/icons-material/Save";
+import ChallengeModel from "../Models/Challenge";
 
 export default function LessonScreen() {
   const actualColor = localStorage.getItem('actualColor');
-  const actualData = JSON.parse(localStorage.getItem('actualData'));
-  const actualUnitData = JSON.parse(localStorage.getItem('actualUnitData'));
+  const actualData = ChallengeModel.getActualChallenge();
+  const [actualUnitData, setActualUnitData] = useState(JSON.parse(localStorage.getItem('actualUnitData')));
+  console.log(actualUnitData);
   const [subtitle, setSubtitle] = useState(actualUnitData.name);
   const history = useHistory();
   const lessons = actualUnitData['lessons'];
@@ -21,12 +23,19 @@ export default function LessonScreen() {
   const onChangeSubtitle = (event) => {
     setSubtitle(event.target.value);
     actualUnitData.name = event.target.value;
+    actualData.updateUnitName(actualUnitData.id, event.target.value);
     localStorage.setItem("actualUnitData", JSON.stringify(actualUnitData));
   }
 
   const handleBack = () => {
     history.push('/units')
   }
+
+  useEffect(
+      () => {
+        localStorage.setItem("new_unit", JSON.stringify(actualUnitData));
+      }, [actualUnitData]
+  )
 
   const header = () => {
     return (
@@ -47,7 +56,7 @@ export default function LessonScreen() {
               </IconButton>
             </div>
             <h1 style={{fontFamily: 'Work Sans', color: '#203F58', fontSize: 42, marginBottom: 0}}>
-              Desafío {actualData['challenge_id'][1]} - {actualData.name}
+              Desafío {actualData.challenge_id[1]} - {actualData.name}
             </h1>
           </div>
           <TextField
@@ -68,7 +77,33 @@ export default function LessonScreen() {
   const addButtonButton = () => {
     return (
       <IconButton
-        style={{padding: 15, margin: 15, position: 'fixed', bottom: 10, right: 10, backgroundColor: actualColor}}>
+        style={{padding: 15, margin: 15, position: 'fixed', bottom: 10, right: 10, backgroundColor: actualColor}}
+        onClick={()=>{
+          let next_id = "";
+          if (actualUnitData["lessons"].length === 0 ){
+            next_id = actualData.challenge_id + "U" + (actualData.units.length + 1).toString() + "L1";
+          }else{
+            next_id = actualData.challenge_id + "U" + (actualData.units.length + 1).toString() + "L" + (actualUnitData["lessons"].length + 1).toString();
+          }
+
+          let new_lesson = {
+            name: "Lección " + next_id.split("L")[1],
+            id: next_id,
+          }
+          actualData.updateLessons(actualUnitData.id, new_lesson);
+          let update_unit = {...actualUnitData};
+          update_unit["lessons"].push(new_lesson);
+          setActualUnitData(update_unit);
+          let exercises = {};
+          exercises[next_id] = [];
+          localStorage.setItem("actualUnitData", JSON.stringify(update_unit));
+          localStorage.setItem("exercises_to_saved", JSON.stringify(exercises));
+          localStorage.setItem("actualLesson", JSON.stringify(new_lesson));
+          localStorage.setItem("lesson_or_exam", new_lesson["name"]);
+          history.push('/exercise')
+
+        }
+        }>
         <Add fontSize="inherit" style={{height: 30, width: 30, color: '#203F58'}}/>
       </IconButton>
     )

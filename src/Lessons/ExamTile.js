@@ -27,7 +27,7 @@ export default function ExamTile({data}) {
 
   return (
     <div >
-      {(exercises.length > 0)?
+      {(exercises.length >= 0)?
           <div style={{
               width: '97%',
               height: 80,

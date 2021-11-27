@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import UnitsTile from "./UnitsTile";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
@@ -7,10 +7,11 @@ import {IconButton} from "@material-ui/core";
 import {useHistory} from "react-router-dom";
 import {Add} from "@material-ui/icons";
 import SaveIcon from "@mui/icons-material/Save";
+import ChallengeModel from "../Models/Challenge";
 
 export default function UnitScreen() {
   const actualColor = localStorage.getItem('actualColor');
-  const actualData = JSON.parse(localStorage.getItem('actualData'));
+  const [actualData, setActualData] = useState(ChallengeModel.getActualChallenge);
   const [subtitle, setSubtitle] = useState(actualData.name);
   const units = actualData.units;
   const history = useHistory();
@@ -18,12 +19,20 @@ export default function UnitScreen() {
   const onChangeSubtitle = (event) => {
     setSubtitle(event.target.value);
     actualData.name = event.target.value;
-    localStorage.setItem("actualData", JSON.stringify(actualData));
+    actualData.save();
   }
 
   const handleBack = () => {
+    localStorage.removeItem("actualChallenge");
+    localStorage.removeItem("actualUnitData");
     history.push('/content')
   }
+
+  useEffect(
+      () => {
+        actualData.save()
+      }, [actualData]
+  )
 
   const header = () => {
     return (
@@ -43,7 +52,7 @@ export default function UnitScreen() {
               </IconButton>
             </div>
             <h1 style={{fontFamily: 'Work Sans', color: '#203F58', fontSize: 42, marginBottom: 0, paddingBottom: 10}}>
-              Desafío {actualData['challenge_id'][1]} -
+              Desafío {actualData.challenge_id.slice(1)} -
             </h1>
             <TextField
               style={{width: "30%", marginTop: 30, alignItems: 'flex-start'}}
@@ -64,7 +73,25 @@ export default function UnitScreen() {
   const addButtonButton = () => {
     return (
       <IconButton
-        style={{padding: 15, margin: 15, position: 'fixed', bottom: 10, right: 10, backgroundColor: actualColor}}>
+        style={{padding: 15, margin: 15, position: 'fixed', bottom: 10, right: 10, backgroundColor: actualColor}}
+        onClick={()=>{
+          let next_id = actualData.challenge_id + "U" + (actualData.units.length + 1).toString()
+          let new_unit = {
+             name: "Nueva Unidad",
+             id: next_id,
+             lessons: [],
+             exam: {
+               id: next_id + "X",
+               duration: 960
+             }
+          }
+          actualData.units.push(new_unit)
+          actualData.save();
+          localStorage.setItem("actualUnitData", JSON.stringify(new_unit));
+          history.push('/lessons')
+        }
+        }
+      >
         <Add fontSize="inherit" style={{height: 30, width: 30, color: '#203F58'}}/>
       </IconButton>
     )

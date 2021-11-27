@@ -2,6 +2,7 @@ import Button from "@material-ui/core/Button";
 import React, {useEffect, useState} from "react";
 import {Redirect, useHistory} from "react-router-dom";
 import {getChallenges, getLessonExercises} from "../Communication/challenge_controller";
+import ExerciseModel from "../Models/Exercise";
 
 export default function LessonTile({data}) {
   const actualColor = localStorage.getItem('actualColor');
@@ -11,8 +12,13 @@ export default function LessonTile({data}) {
   useEffect(() => {
     async function loadChallenges(){
       if (exercises.length === 0){
-      let exercises_to_load = await getLessonExercises(data.id);
-          setExercises(exercises_to_load);
+        let exercises_to_load = await getLessonExercises(data.id);
+        let exercises_storage = ExerciseModel.getExercises(data.id);
+         if (exercises_to_load.length === 0 || exercises_storage.length > exercises_to_load.length){
+           setExercises(exercises_storage);
+        }else{
+           setExercises(exercises_to_load);
+         }
       }
 
       }
@@ -20,7 +26,7 @@ export default function LessonTile({data}) {
   }, [exercises])
 
   const handleClick = async () => {
-    localStorage.setItem("exercises", JSON.stringify(exercises));
+    localStorage.setItem("exercises_to_saved", JSON.stringify(exercises));
     let number = data.id.split("L")[1];
     localStorage.setItem("lesson_or_exam", "Lección " + number);
     history.push('/exercise')
@@ -28,7 +34,7 @@ export default function LessonTile({data}) {
 
   return (
     <div>
-      {(exercises.length > 0) ?
+      {(exercises.length >= 0) ?
           <div style={{
           width: '97%',
           height: 80,

@@ -46,4 +46,12 @@ export const getExamExercises = (exam_id) => {
         });
 }
 
+export const getNextChallengeId = () => {
+    return fetch(url+"challenges/next")
+        .then(response => response.json())
+        .then(data =>{
+            return data["challenges_next_id"];
+        });
+}
+
 export default createLesson;

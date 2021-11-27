@@ -8,11 +8,14 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import {useHistory} from "react-router-dom";
 import {Add} from "@material-ui/icons";
 import SaveIcon from "@mui/icons-material/Save";
+import ChallengeModel from "../Models/Challenge";
+import ExerciseModel from "../Models/Exercise";
 
 export default function ExercisesScreen() {
   const history = useHistory();
-  const actualData = JSON.parse(localStorage.getItem('actualData'));
+  const actualData = ChallengeModel.getActualChallenge();
   const actualUnitData = JSON.parse(localStorage.getItem('actualUnitData'));
+  const actualLessonData = JSON.parse(localStorage.getItem('actualLesson'));
   const [completeButton, setCompleteButton] = useState('white');
   const [toNewButton, setToNew] = useState('white');
   const [toOriginalButton, setToOriginal] = useState('#CAA7F3');
@@ -27,7 +30,7 @@ export default function ExercisesScreen() {
   const [correct, setCorrect] = useState(1);
   const [openModal, setOpenModal] = useState(false);
 
-  let data = JSON.parse(localStorage.getItem("exercises"));
+  let data = JSON.parse(localStorage.getItem("exercises_to_saved"))[actualLessonData["id"]];
   let lesson_or_exam = localStorage.getItem("lesson_or_exam");
   const buttonHandle = (number) => {
     setCorrect(number);
@@ -106,7 +109,7 @@ export default function ExercisesScreen() {
             </IconButton>
           </div>
           <h1 style={styles.headerTitle}>
-            Desafío {actualData['challenge_id'][1]} - {actualData.name}
+            Desafío {actualData.challenge_id[1]} - {actualData.name}
           </h1>
         </div>
         <h3 style={styles.headerSubtitle}>
@@ -316,6 +319,34 @@ export default function ExercisesScreen() {
               <div style={{justifyContent: 'flex-end', display: 'flex', width: '100%'}}>
                 <Button variant="contained" style={styles.saveButton}
                         onClick={() => {
+                          let type = "";
+
+                          if (completeButton !== "white"){
+                            type = "Complete";
+                          }
+                          if (toNewButton !== "white"){
+                            type = "TranslateToNew";
+                          }
+                          if (toOriginalButton !== "white"){
+                            type = "TranslateToOriginal";
+                          }
+                          if (audioButton !== "white"){
+                            type = "Listening";
+                          }
+
+                          let options = [
+                            answerOne, answerTwo, answerThree, answerFour, answerFive, answerSix
+                          ]
+
+                          let exercise_id = ExerciseModel.getNextId(actualLessonData["id"]);
+                          ExerciseModel.addNewExercises(actualLessonData["id"], {
+                            "lesson_id": actualLessonData["id"],
+                            "exercise_type": type,
+                            "question": question,
+                            "options": options,
+                            "correct_answer": options[correct - 1],
+                            "exercise_id": exercise_id
+                          })
                           setOpenModal(false);
                         }}>
                   Guardar
