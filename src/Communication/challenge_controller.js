@@ -1,3 +1,5 @@
+const url = 'https://idiomaplay-gateway.herokuapp.com/';
+
 const createLesson = (lesson) => {
     console.log(lesson);
     const exercises = lesson.exercises;
@@ -18,6 +20,30 @@ const createLesson = (lesson) => {
         id: "L1"
     };
     console.log(lesson_to_save);
+}
+
+export const getChallenges = () => {
+    return fetch(url + 'challenges')
+        .then(response => response.json())
+        .then(data =>{
+            return data["challenges"];
+        });
+}
+
+export const getLessonExercises = (lesson_id) => {
+    return fetch(url+"lessons/"+ lesson_id + "/exercises")
+        .then(response => response.json())
+        .then(data =>{
+            return data["exercises"];
+        });
+}
+
+export const getExamExercises = (exam_id) => {
+    return fetch(url+"exams/"+ exam_id + "/exercises")
+        .then(response => response.json())
+        .then(data =>{
+            return data["exercises"];
+        });
 }
 
 export default createLesson;

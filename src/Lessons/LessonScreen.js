@@ -6,6 +6,7 @@ import ExamTile from "./ExamTile";
 import {IconButton} from "@material-ui/core";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import {useHistory} from "react-router-dom";
+import Loading from "../Loading/Loading";
 
 export default function LessonScreen() {
   const actualColor = localStorage.getItem('actualColor');
@@ -13,8 +14,8 @@ export default function LessonScreen() {
   const actualUnitData = JSON.parse(localStorage.getItem('actualUnitData'));
   const [subtitle, setSubtitle] = useState(actualUnitData.name);
   const history = useHistory();
-  const lessons = actualUnitData['lessons']
-
+  const lessons = actualUnitData['lessons'];
+  const exam = actualUnitData["exam"]
   const onChangeSubtitle = (event) => {
     setSubtitle(event.target.value);
     actualUnitData.name = event.target.value;
@@ -97,7 +98,7 @@ export default function LessonScreen() {
           }}>
             Examen
           </h2>
-          <ExamTile/>
+          <ExamTile data={exam}/>
         </div>
         <div>
           <h2 style={{

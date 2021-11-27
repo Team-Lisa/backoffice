@@ -1,9 +1,13 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import Button from "@material-ui/core/Button";
 import ChallengeTile from "../../Challenge/ChallengeTile";
+import {getChallenges} from "../../Communication/challenge_controller";
+import Loader from "react-loader-spinner";
+import Loading from "../../Loading/Loading";
 
 
 const ContentManager = () => {
+  const [challenges, setChallenges] = useState([]);
 
   const header = () => {
     return (
@@ -48,68 +52,17 @@ const ContentManager = () => {
 
   const colors = ['#FED178', '#CAA7F3', '#C4FEAC', '#93D9F8'];
 
-  let data = [
-    {
-      "name": "Básico 1.0",
-      "units": [
-        {
-          "name": "Introducción",
-          "exam": {
-            "id": "E1",
-            "duration": 960
-          },
-          "lessons": [
-            {
-              "name": "Lección 1",
-              "id": "L1"
-            }
-          ],
-          "id": "U1"
-        }
-      ],
-      "challenge_id": "D1"
-    },
-    {
-      "name": "Básico 2.0",
-      "units": [
-        {
-          "name": "Comparativo/Superlativo",
-          "exam": {
-            "id": "E2",
-            "duration": 5
-          },
-          "lessons": [
-            {
-              "name": "Lección 1",
-              "id": "L2"
-            }
-          ],
-          "id": "U2"
-        }
-      ],
-      "challenge_id": "D2"
-    },
-    {
-      "name": "Intermedio",
-      "units": [
-        {
-          "name": "Condicional 1",
-          "exam": {
-            "id": "E3",
-            "duration": 960
-          },
-          "lessons": [
-            {
-              "name": "Lección 1",
-              "id": "L3"
-            }
-          ],
-          "id": "U3"
-        }
-      ],
-      "challenge_id": "D3"
+  useEffect(() => {
+    async function loadChallenges() {
+      if (challenges.length === 0) {
+        let challenges_to_load = await getChallenges();
+        setChallenges(challenges_to_load);
+      }
+
     }
-  ]
+
+    loadChallenges()
+  }, [challenges])
 
   const YELLOW = '#FED178';
   const PURPLE = '#CAA7F3';
@@ -130,26 +83,27 @@ const ContentManager = () => {
     return actualColor;
   }
 
-
   return (
     <div>
-      <div style={{paddingBottom: 80, paddingTop: 100}}>
-        {data.map((value, index) => {
-          let color = actualColor;
-          if (index !== 0) {
-            color = getColor(color);
-          }
-          return (
-            <div>
-              <ChallengeTile color={color} key={index} data={value}/>
-            </div>
-          )
-        })}
-      </div>
+      {(challenges.length > 0) ?
+        <div style={{paddingBottom: 80, paddingTop: 100}}>
+          {challenges.map((value, index) => {
+            let color = actualColor;
+            if (index !== 0) {
+              color = getColor(color);
+            }
+            return (
+              <div>
+                <ChallengeTile color={color} key={index} data={value}/>
+              </div>
+            )
+          })}
+        </div>
+        : <Loading color={'#203F58'}/>}
+
       {header()}
       {addButtonBottom()}
     </div>
-
   )
 }
 

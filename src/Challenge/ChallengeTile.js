@@ -12,7 +12,7 @@ export default function ChallengeTile({color, data}) {
 
 
   const publishButton = () => {
-    if (data.publish) {
+    if (data.published) {
       return (
         <Button variant="contained" style={{
           color: '#203F58',
