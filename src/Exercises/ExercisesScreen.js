@@ -470,7 +470,7 @@ export default function ExercisesScreen() {
         })}
       </div>
       {header()}
-      {addButtonButton()}
+      {!actualData.published && addButtonButton()}
       {newExercise()}
     </div>
   );

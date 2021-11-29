@@ -198,7 +198,7 @@ export default function LessonScreen() {
         </div>
       </div>
       {header()}
-      {addButtonButton()}
+      {!actualData.published && addButtonButton()}
       {saveButton()}
     </div>
   );

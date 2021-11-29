@@ -2,12 +2,13 @@ import Button from "@material-ui/core/Button";
 import React, {useState} from "react";
 import {Redirect, useHistory} from "react-router-dom";
 import ChallengeModel from "../Models/Challenge";
+import {saveChallenge} from "../Communication/challenge_controller";
 
-export default function ChallengeTile({color, data}) {
+export default function ChallengeTile({color, data, update}) {
   const history = useHistory();
   const [actualData, setActualData] = useState(new ChallengeModel(data["name"], data["units"], data["challenge_id"], data["published"]));
   const handleClick = () => {
-    //localStorage.setItem("challenge_is_new", "false");
+    localStorage.setItem("challenge_is_new", "false");
     localStorage.setItem("actualColor", color);
     actualData.save()
     history.push('/units')
@@ -23,7 +24,8 @@ export default function ChallengeTile({color, data}) {
           borderRadius: 10,
           width: 150,
           fontFamily: 'Montserrat',
-        }}>
+        }}
+        >
           Publicado
         </Button>
       )
@@ -35,7 +37,19 @@ export default function ChallengeTile({color, data}) {
           borderRadius: 10,
           width: 150,
           fontFamily: 'Montserrat'
-        }}>
+        }}
+        onClick={
+           async () => {
+              actualData.publish();
+              let data = ChallengeModel.getActualChallengeJSON()
+              let response = await saveChallenge(actualData.challenge_id, data);
+              if (!response){
+                  console.log("error al publicar");
+              }
+              setActualData(actualData);
+              update();
+           }
+        }>
           Publicar
         </Button>)
     }
