@@ -33,41 +33,51 @@ export default function ExercisesScreen() {
   const [exerciseId, setExerciseId] = useState("");
 
   let exercises_lessons = JSON.parse(localStorage.getItem("exercises_to_saved"));
-  let data = exercises_lessons.hasOwnProperty(actualLessonData["id"]) ? exercises_lessons[actualLessonData["id"]]: [];
+  let data = exercises_lessons.hasOwnProperty(actualLessonData["id"]) ? exercises_lessons[actualLessonData["id"]] : [];
   let lesson_or_exam = localStorage.getItem("lesson_or_exam");
   const buttonHandle = (number) => {
     setCorrect(number);
   }
 
+  const cleanAll = () => {
+    setQuestion("");
+    setAnswerOne("");
+    setAnswerTwo("");
+    setAnswerThree("");
+    setAnswerFour("");
+    setAnswerFive("");
+    setAnswerSix("");
+    setCorrect(1);
+    toOriginalHandle();
+
+  }
+
   const editExercise = (data) => {
-      setQuestion(data["question"]);
-      setAnswerOne(data["options"][0])
-      setAnswerTwo(data["options"][1])
-      setAnswerThree(data["options"][2])
-      setAnswerFour(data["options"][3])
+    setQuestion(data["question"]);
+    setAnswerOne(data["options"][0])
+    setAnswerTwo(data["options"][1])
+    setAnswerThree(data["options"][2])
+    setAnswerFour(data["options"][3])
 
-      if(data["exercise_type"] !== "Complete"){
-        setAnswerFive(data["options"][4])
-        setAnswerSix(data["options"][5])
-      }
+    if (data["exercise_type"] !== "Complete") {
+      setAnswerFive(data["options"][4])
+      setAnswerSix(data["options"][5])
+    }
 
-      setCorrect(data["options"].indexOf(data["correct_answer"]) + 1)
+    setCorrect(data["options"].indexOf(data["correct_answer"]) + 1)
 
-      if(data["exercise_type"] === "TranslateToOriginal"){
-        toOriginalHandle();
-      }
-      else if(data["exercise_type"] === "TranslateToNew"){
-        toNewHandle();
-      }
-      else if(data["exercise_type"] === "Complete"){
-        completeHandle();
-      }
-      else {
-        audioHandle();
-      }
+    if (data["exercise_type"] === "TranslateToOriginal") {
+      toOriginalHandle();
+    } else if (data["exercise_type"] === "TranslateToNew") {
+      toNewHandle();
+    } else if (data["exercise_type"] === "Complete") {
+      completeHandle();
+    } else {
+      audioHandle();
+    }
 
-      setExerciseId(data["exercise_id"])
-      setOpenModal(true)
+    setExerciseId(data["exercise_id"])
+    setOpenModal(true)
   }
 
 
@@ -207,6 +217,77 @@ export default function ExercisesScreen() {
     }
   }
 
+
+  const handleSave = async () => {
+    let type = "";
+
+    if (completeButton !== "white") {
+      type = "Complete";
+    }
+    if (toNewButton !== "white") {
+      type = "TranslateToNew";
+    }
+    if (toOriginalButton !== "white") {
+      type = "TranslateToOriginal";
+    }
+    if (audioButton !== "white") {
+      type = "Listening";
+    }
+
+    let options = [
+      answerOne, answerTwo, answerThree, answerFour
+    ]
+
+    if (type !== "Complete") {
+      options.push(answerFive);
+      options.push(answerSix);
+    }
+
+    let new_challenge = localStorage.getItem("challenge_is_new");
+    let exercise_id = ""
+    let edit = false;
+    if (exerciseId !== "") {
+      edit = true;
+      exercise_id = exerciseId
+    }
+
+    if (new_challenge !== "true") {
+      let response_exercises = await saveExercise({
+        "lesson_id": actualLessonData["id"],
+        "exercise_type": type,
+        "question": question,
+        "options": options,
+        "correct_answer": options[correct - 1],
+      }, exercise_id)
+      if (response_exercises) {
+        if (edit) {
+          ExerciseModel.editExercise(actualLessonData["id"], exerciseId, {
+            "lesson_id": actualLessonData["id"],
+            "exercise_type": type,
+            "question": question,
+            "options": options,
+            "correct_answer": options[correct - 1],
+            "exercise_id": exerciseId
+          })
+        } else {
+          exercise_id = ExerciseModel.getNextId(actualLessonData["id"]);
+          ExerciseModel.addNewExercises(actualLessonData["id"], {
+            "lesson_id": actualLessonData["id"],
+            "exercise_type": type,
+            "question": question,
+            "options": options,
+            "correct_answer": options[correct - 1],
+            "exercise_id": exercise_id
+          })
+        }
+        setOpenModal(false);
+        cleanAll();
+      }
+    } else {
+      setOpenModal(false);
+      cleanAll();
+    }
+  }
   const newExercise = () => {
     return (
       <Modal isOpen={openModal} centered style={styles.modalContent}>
@@ -219,6 +300,7 @@ export default function ExercisesScreen() {
               <Button variant="text" style={styles.closeButton}
                       onClick={() => {
                         setOpenModal(false);
+                        cleanAll();
                       }}>
                 X
               </Button>
@@ -353,76 +435,9 @@ export default function ExercisesScreen() {
               </div>
               <div style={{justifyContent: 'flex-end', display: 'flex', width: '100%'}}>
                 <Button variant="contained" style={styles.saveButton}
-                        onClick={ async () => {
-                          let type = "";
-
-                          if (completeButton !== "white"){
-                            type = "Complete";
-                          }
-                          if (toNewButton !== "white"){
-                            type = "TranslateToNew";
-                          }
-                          if (toOriginalButton !== "white"){
-                            type = "TranslateToOriginal";
-                          }
-                          if (audioButton !== "white"){
-                            type = "Listening";
-                          }
-
-                          let options = [
-                            answerOne, answerTwo, answerThree, answerFour
-                          ]
-
-                          if (type !== "Complete"){
-                            options.push(answerFive);
-                            options.push(answerSix);
-                          }
-
-                          let new_challenge = localStorage.getItem("challenge_is_new");
-                          let exercise_id = ""
-                          let edit = false;
-                          if (exerciseId !== ""){
-                            edit = true;
-                            exercise_id = exerciseId
-                          }
-
-                          if (new_challenge !== "true"){
-                            let response_exercises = await saveExercise({
-                              "lesson_id": actualLessonData["id"],
-                              "exercise_type": type,
-                              "question": question,
-                              "options": options,
-                              "correct_answer": options[correct - 1],
-                            }, exercise_id)
-                            if (response_exercises){
-                              if (edit){
-                                ExerciseModel.editExercise(actualLessonData["id"], exerciseId, {
-                                  "lesson_id": actualLessonData["id"],
-                                  "exercise_type": type,
-                                  "question": question,
-                                  "options": options,
-                                  "correct_answer": options[correct - 1],
-                                  "exercise_id": exerciseId
-                                })
-                              }else{
-                                exercise_id = ExerciseModel.getNextId(actualLessonData["id"]);
-                                ExerciseModel.addNewExercises(actualLessonData["id"], {
-                                  "lesson_id": actualLessonData["id"],
-                                  "exercise_type": type,
-                                  "question": question,
-                                  "options": options,
-                                  "correct_answer": options[correct - 1],
-                                  "exercise_id": exercise_id
-                                })
-                              }
-                              setOpenModal(false);
-                            }
-                          }else{
-                            setOpenModal(false);
-                          }
-
-
-                            }}>
+                        onClick={async () => {
+                          await handleSave();
+                        }}>
                   Guardar
                 </Button>
               </div>
