@@ -133,7 +133,6 @@ const ContentManager = () => {
       {waiting ? <Loading color={'#203F58'}/> : ""}
       {header()}
       {addButtonButton()}
-      {saveButton()}
     </div>
   )
 }
