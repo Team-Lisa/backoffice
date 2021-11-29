@@ -1,18 +1,21 @@
 import Button from "@material-ui/core/Button";
-import React from "react";
+import React, {useState} from "react";
 import {Redirect, useHistory} from "react-router-dom";
+import ChallengeModel from "../Models/Challenge";
 
 export default function ChallengeTile({color, data}) {
   const history = useHistory();
+  const [actualData, setActualData] = useState(new ChallengeModel(data["name"], data["units"], data["challenge_id"], data["published"]));
   const handleClick = () => {
+    //localStorage.setItem("challenge_is_new", "false");
     localStorage.setItem("actualColor", color);
-    localStorage.setItem("actualData", JSON.stringify(data));
+    actualData.save()
     history.push('/units')
   };
 
 
   const publishButton = () => {
-    if (data.published) {
+    if (actualData.published) {
       return (
         <Button variant="contained" style={{
           color: '#203F58',
@@ -50,10 +53,10 @@ export default function ChallengeTile({color, data}) {
       margin: '20px'
     }}>
       <h2 style={{fontFamily: 'Montserrat', color: '#203F58', width: "60%"}}>
-        Desafio {data['challenge_id'][1]} - {data.name}
+        Desafio {actualData.challenge_id[1]} - {actualData.name}
       </h2>
       <h4 style={{fontFamily: 'Montserrat', color: '#203F58'}}>
-        {data.units.length} Unidades
+        {actualData.units.length} Unidades
       </h4>
       <div>
         <Button variant="contained" style={{

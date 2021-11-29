@@ -1,13 +1,11 @@
 import Button from "@material-ui/core/Button";
 import React from "react";
 
-export default function ExerciseTile({data}) {
+export default function ExerciseTile({data, edit}) {
   const color = data["exercise_type"] === 'TranslateToOriginal' ? '#CAA7F3' : data["exercise_type"] === 'TranslateToNew' ? '#C4FEAC' : data["exercise_type"] === 'Listening' ? '#FED178' : '#93D9F8';
 
-
   const handleClick = () => {
-    //localStorage.setItem("actualUnitData", JSON.stringify(data));
-    //history.push('/lessons')
+    edit(data)
   };
 
   return (
@@ -22,7 +20,7 @@ export default function ExerciseTile({data}) {
       margin: '20px'
     }}>
       <h2 style={{fontFamily: 'Montserrat', color: '#203F58', width: "70%"}}>
-        {data.question}
+        {(data["exercise_type"] === 'Listening') ? "Audio" : data.question}
       </h2>
       <h4 style={{fontFamily: 'Montserrat', color: '#203F58'}}>
         {data.options.length} opciones
