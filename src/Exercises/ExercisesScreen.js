@@ -10,6 +10,7 @@ import {Add} from "@material-ui/icons";
 import SaveIcon from "@mui/icons-material/Save";
 import ChallengeModel from "../Models/Challenge";
 import ExerciseModel from "../Models/Exercise";
+import {saveExercise} from "../Communication/exercises_controller";
 
 export default function ExercisesScreen() {
   const history = useHistory();
@@ -29,12 +30,46 @@ export default function ExercisesScreen() {
   const [answerSix, setAnswerSix] = useState('');
   const [correct, setCorrect] = useState(1);
   const [openModal, setOpenModal] = useState(false);
+  const [exerciseId, setExerciseId] = useState("");
 
-  let data = JSON.parse(localStorage.getItem("exercises_to_saved"))[actualLessonData["id"]];
+  let exercises_lessons = JSON.parse(localStorage.getItem("exercises_to_saved"));
+  let data = exercises_lessons.hasOwnProperty(actualLessonData["id"]) ? exercises_lessons[actualLessonData["id"]]: [];
   let lesson_or_exam = localStorage.getItem("lesson_or_exam");
   const buttonHandle = (number) => {
     setCorrect(number);
   }
+
+  const editExercise = (data) => {
+      setQuestion(data["question"]);
+      setAnswerOne(data["options"][0])
+      setAnswerTwo(data["options"][1])
+      setAnswerThree(data["options"][2])
+      setAnswerFour(data["options"][3])
+
+      if(data["exercise_type"] !== "Complete"){
+        setAnswerFive(data["options"][4])
+        setAnswerSix(data["options"][5])
+      }
+
+      setCorrect(data["options"].indexOf(data["correct_answer"]) + 1)
+
+      if(data["exercise_type"] === "TranslateToOriginal"){
+        toOriginalHandle();
+      }
+      else if(data["exercise_type"] === "TranslateToNew"){
+        toNewHandle();
+      }
+      else if(data["exercise_type"] === "Complete"){
+        completeHandle();
+      }
+      else {
+        audioHandle();
+      }
+
+      setExerciseId(data["exercise_id"])
+      setOpenModal(true)
+  }
+
 
   const onChangeQuestion = (event) => {
     setQuestion(event.target.value);
@@ -318,7 +353,7 @@ export default function ExercisesScreen() {
               </div>
               <div style={{justifyContent: 'flex-end', display: 'flex', width: '100%'}}>
                 <Button variant="contained" style={styles.saveButton}
-                        onClick={() => {
+                        onClick={ async () => {
                           let type = "";
 
                           if (completeButton !== "white"){
@@ -335,20 +370,59 @@ export default function ExercisesScreen() {
                           }
 
                           let options = [
-                            answerOne, answerTwo, answerThree, answerFour, answerFive, answerSix
+                            answerOne, answerTwo, answerThree, answerFour
                           ]
 
-                          let exercise_id = ExerciseModel.getNextId(actualLessonData["id"]);
-                          ExerciseModel.addNewExercises(actualLessonData["id"], {
-                            "lesson_id": actualLessonData["id"],
-                            "exercise_type": type,
-                            "question": question,
-                            "options": options,
-                            "correct_answer": options[correct - 1],
-                            "exercise_id": exercise_id
-                          })
-                          setOpenModal(false);
-                        }}>
+                          if (type !== "Complete"){
+                            options.push(answerFive);
+                            options.push(answerSix);
+                          }
+
+                          let new_challenge = localStorage.getItem("challenge_is_new");
+                          let exercise_id = ""
+                          let edit = false;
+                          if (exerciseId !== ""){
+                            edit = true;
+                            exercise_id = exerciseId
+                          }
+
+                          if (new_challenge !== "true"){
+                            let response_exercises = await saveExercise({
+                              "lesson_id": actualLessonData["id"],
+                              "exercise_type": type,
+                              "question": question,
+                              "options": options,
+                              "correct_answer": options[correct - 1],
+                            }, exercise_id)
+                            if (response_exercises){
+                              if (edit){
+                                ExerciseModel.editExercise(actualLessonData["id"], exerciseId, {
+                                  "lesson_id": actualLessonData["id"],
+                                  "exercise_type": type,
+                                  "question": question,
+                                  "options": options,
+                                  "correct_answer": options[correct - 1],
+                                  "exercise_id": exerciseId
+                                })
+                              }else{
+                                exercise_id = ExerciseModel.getNextId(actualLessonData["id"]);
+                                ExerciseModel.addNewExercises(actualLessonData["id"], {
+                                  "lesson_id": actualLessonData["id"],
+                                  "exercise_type": type,
+                                  "question": question,
+                                  "options": options,
+                                  "correct_answer": options[correct - 1],
+                                  "exercise_id": exercise_id
+                                })
+                              }
+                              setOpenModal(false);
+                            }
+                          }else{
+                            setOpenModal(false);
+                          }
+
+
+                            }}>
                   Guardar
                 </Button>
               </div>
@@ -371,27 +445,17 @@ export default function ExercisesScreen() {
     )
   }
 
-  const saveButton = () => {
-    return (
-      <IconButton
-        style={{padding: 15, margin: 15, position: 'fixed', bottom: 80, right: 10, backgroundColor: '#203F58'}}>
-        <SaveIcon fontSize="inherit" style={{height: 30, width: 30, color: '#CEEDE8'}}/>
-      </IconButton>
-    )
-  }
-
   return (
     <div>
       <div style={{paddingBottom: 80, paddingTop: 100}}>
         {data.map((value, index) => {
           return (
-            <ExerciseTile key={index} data={value}/>
+            <ExerciseTile key={index} data={value} edit={editExercise}/>
           )
         })}
       </div>
       {header()}
       {addButtonButton()}
-      {saveButton()}
       {newExercise()}
     </div>
   );

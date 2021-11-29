@@ -52,4 +52,11 @@ export default class ChallengeModel {
         return new ChallengeModel(data["name"], data["units"], data["challenge_id"], data["published"])
 
     }
+
+    static getActualChallengeJSON(){
+        let data = JSON.parse(localStorage.getItem('actualChallenge'));
+        data["id"] = data["challenge_id"];
+        delete data["challenge_id"];
+        return data;
+    }
 }

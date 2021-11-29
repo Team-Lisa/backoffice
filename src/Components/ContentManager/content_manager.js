@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import Button from "@material-ui/core/Button";
 import ChallengeTile from "../../Challenge/ChallengeTile";
-import {getChallenges, getNextChallengeId} from "../../Communication/challenge_controller";
+import {createChallenge, getChallenges, getNextChallengeId} from "../../Communication/challenge_controller";
 import Loader from "react-loader-spinner";
 import Loading from "../../Loading/Loading";
 import SaveIcon from "@mui/icons-material/Save";
@@ -48,9 +48,9 @@ const ContentManager = () => {
                 let challenge = new ChallengeModel("Nuevo Desafio", [], next_id, false);
                 challenge.save();
 
-                let color_index = (challenges.length % colors.length) !== 0 ? (challenges.length % colors.length) - 1 : colors.length - 1;
-
-                localStorage.setItem("actualColor", colors[color_index]);
+                let color = getColor(actualColor);
+                localStorage.setItem("challenge_is_new", "true");
+                localStorage.setItem("actualColor", color);
                 history.push('/units')
             }
         }>
@@ -62,13 +62,25 @@ const ContentManager = () => {
   const saveButton = () => {
     return (
       <IconButton
-        style={{padding: 15, margin: 15, position: 'fixed', bottom: 80, right: 10, backgroundColor: '#203F58'}}>
+        style={{padding: 15, margin: 15, position: 'fixed', bottom: 80, right: 10, backgroundColor: '#203F58'}}
+        onClick={
+            async () => {
+                let challenge_to_save = ChallengeModel.getActualChallenge();
+                let response = await createChallenge(challenge_to_save);
+                if (response){
+                    console.log("challenge created")
+                }else{
+                    console.log("error")
+                }
+            }
+        }
+      >
         <SaveIcon fontSize="inherit" style={{height: 30, width: 30, color: '#CEEDE8'}}/>
       </IconButton>
     )
   }
 
-  const colors = ['#FED178', '#CAA7F3', '#C4FEAC', '#93D9F8'];
+  const colors = ['#FED178', '#CAA7F3', '#93D9F8', '#C4FEAC'];
 
   useEffect(() => {
     async function loadChallenges() {

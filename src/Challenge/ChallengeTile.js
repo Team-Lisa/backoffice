@@ -7,6 +7,7 @@ export default function ChallengeTile({color, data}) {
   const history = useHistory();
   const [actualData, setActualData] = useState(new ChallengeModel(data["name"], data["units"], data["challenge_id"], data["published"]));
   const handleClick = () => {
+    //localStorage.setItem("challenge_is_new", "false");
     localStorage.setItem("actualColor", color);
     actualData.save()
     history.push('/units')

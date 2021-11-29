@@ -8,17 +8,26 @@ export default function LessonTile({data}) {
   const actualColor = localStorage.getItem('actualColor');
   const history = useHistory();
   const [exercises, setExercises] = useState([]);
-
+  const [stop , setStop] = useState(false);
   useEffect(() => {
     async function loadChallenges(){
-      if (exercises.length === 0){
+      if (exercises.length === 0 && !stop){
         let exercises_to_load = await getLessonExercises(data.id);
         let exercises_storage = ExerciseModel.getExercises(data.id);
+        let exercises_to_save = {};
+        if (localStorage.hasOwnProperty('exercises_to_saved')){
+          exercises_to_save = JSON.parse(localStorage.getItem('exercises_to_saved'));
+        }
          if (exercises_to_load.length === 0 || exercises_storage.length > exercises_to_load.length){
            setExercises(exercises_storage);
+           exercises_to_save[data.id] = exercises_storage;
+           localStorage.setItem("exercises_to_saved", JSON.stringify(exercises_to_save));
         }else{
            setExercises(exercises_to_load);
+           exercises_to_save[data.id] = exercises_to_load;
+           localStorage.setItem("exercises_to_saved", JSON.stringify(exercises_to_save));
          }
+        setStop(true)
       }
 
       }
@@ -26,9 +35,10 @@ export default function LessonTile({data}) {
   }, [exercises])
 
   const handleClick = async () => {
-    localStorage.setItem("exercises_to_saved", JSON.stringify(exercises));
     let number = data.id.split("L")[1];
+    localStorage.setItem("actualLesson", JSON.stringify(data));
     localStorage.setItem("lesson_or_exam", "Lección " + number);
+    setStop(false);
     history.push('/exercise')
   };
 

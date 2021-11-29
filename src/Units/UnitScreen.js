@@ -8,6 +8,9 @@ import {useHistory} from "react-router-dom";
 import {Add} from "@material-ui/icons";
 import SaveIcon from "@mui/icons-material/Save";
 import ChallengeModel from "../Models/Challenge";
+import {createChallenge, saveChallenge} from "../Communication/challenge_controller";
+import ExerciseModel from "../Models/Exercise";
+import {createExercise} from "../Communication/exercises_controller";
 
 export default function UnitScreen() {
   const actualColor = localStorage.getItem('actualColor');
@@ -24,7 +27,11 @@ export default function UnitScreen() {
 
   const handleBack = () => {
     localStorage.removeItem("actualChallenge");
-    localStorage.removeItem("actualUnitData");
+    localStorage.removeItem("exercises_to_saved");
+    localStorage.removeItem("new_unit");
+    localStorage.removeItem("actualLesson");
+    localStorage.removeItem("challenge_is_new");
+    localStorage.removeItem("actualColor");
     history.push('/content')
   }
 
@@ -100,7 +107,48 @@ export default function UnitScreen() {
   const saveButton = () => {
     return (
       <IconButton
-        style={{padding: 15, margin: 15, position: 'fixed', bottom: 80, right: 10, backgroundColor: actualColor}}>
+        style={{padding: 15, margin: 15, position: 'fixed', bottom: 80, right: 10, backgroundColor: actualColor}}
+        onClick={
+            async () => {
+                let challenge_to_save = ChallengeModel.getActualChallengeJSON();
+                let new_challenge = localStorage.getItem("challenge_is_new");
+                if (new_challenge !== "true"){
+                    let response = await saveChallenge(challenge_to_save["id"], challenge_to_save);
+                    if (response){
+                        console.log("challenge created")
+                        handleBack();
+                    }else{
+                        console.log("error")
+                    }
+
+                }else{
+                    let response = await createChallenge(challenge_to_save);
+                    if (response){
+                        console.log("challenge created")
+                    }else{
+                        console.log("error")
+                    }
+
+                    let exercises = await ExerciseModel.getExercisesToSave();
+                    for (const lesson_id in exercises) {
+                        let exercises_i = exercises[lesson_id];
+                        for (let i = 0; i < exercises_i.length; i++) {
+                            let exercise = exercises_i[i]
+                            delete exercise["exercise_id"];
+                            let response_exercise = await createExercise(exercise);
+                            if (response_exercise){
+                                console.log("exercise created")
+                            }else{
+                                console.log("error exercise")
+                            }
+                        }
+                    handleBack();
+                    }
+                }
+
+
+            }
+        }>
         <SaveIcon fontSize="inherit" style={{height: 30, width: 30, color: '#203F58'}}/>
       </IconButton>
     )

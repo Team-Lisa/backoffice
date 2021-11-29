@@ -54,4 +54,40 @@ export const getNextChallengeId = () => {
         });
 }
 
+export const createChallenge = (challenge) => {
+    return fetch(url+"challenges", {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(challenge)
+    }).then(
+        response => response.json()
+    ).then(
+        data => {
+            console.log(data);
+            return data.hasOwnProperty("challenge");
+        }
+    )
+}
+
+export const saveChallenge = (challenge_id, challenge) => {
+    return fetch(url+"challenges/"+challenge_id, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(challenge)
+    }).then(
+        response => response.json()
+    ).then(
+        data => {
+            console.log(data);
+            return data.hasOwnProperty("challenge");
+        }
+    )
+}
+
 export default createLesson;
