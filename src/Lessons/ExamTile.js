@@ -2,17 +2,32 @@ import Button from "@material-ui/core/Button";
 import React, {useEffect, useState} from "react";
 import {Redirect, useHistory} from "react-router-dom";
 import {getExamExercises, getLessonExercises} from "../Communication/challenge_controller";
+import ExerciseModel from "../Models/Exercise";
 
 export default function ExamTile({data}) {
   const actualColor = localStorage.getItem('actualColor');
   const history = useHistory();
   const [exercises, setExercises] = useState([]);
-
+  const [stop, setStop] = useState(false);
   useEffect(() => {
         async function loadChallenges(){
-            if (exercises.length === 0){
+            if (exercises.length === 0 && !stop){
                 let exercises_to_load = await getExamExercises(data.id);
-                setExercises(exercises_to_load);
+                let exercises_storage = ExerciseModel.getExercises(data.id);
+                let exercises_to_save = {};
+                if (localStorage.hasOwnProperty('exercises_to_saved')){
+                    exercises_to_save = JSON.parse(localStorage.getItem('exercises_to_saved'));
+                }
+                if (exercises_to_load.length === 0 || exercises_storage.length > exercises_to_load.length){
+                    setExercises(exercises_storage);
+                    exercises_to_save[data.id] = exercises_storage;
+                    localStorage.setItem("exercises_to_saved", JSON.stringify(exercises_to_save));
+                }else{
+                    setExercises(exercises_to_load);
+                    exercises_to_save[data.id] = exercises_to_load;
+                    localStorage.setItem("exercises_to_saved", JSON.stringify(exercises_to_save));
+                }
+                setStop(true)
             }
 
         }
@@ -22,12 +37,14 @@ export default function ExamTile({data}) {
   const handleClick = async () => {
     localStorage.setItem("exercises", JSON.stringify(exercises));
     localStorage.setItem("lesson_or_exam", "Examen");
+    localStorage.setItem("actualLesson", JSON.stringify(data));
+    setStop(false);
     history.push('/exercise')
   };
 
   return (
     <div >
-      {(exercises.length > 0)?
+      {(exercises.length >= 0)?
           <div style={{
               width: '97%',
               height: 80,

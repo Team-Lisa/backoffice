@@ -1,14 +1,20 @@
 import React, {useEffect, useState} from "react";
 import Button from "@material-ui/core/Button";
 import ChallengeTile from "../../Challenge/ChallengeTile";
-import {getChallenges} from "../../Communication/challenge_controller";
+import {createChallenge, getChallenges, getNextChallengeId} from "../../Communication/challenge_controller";
 import Loader from "react-loader-spinner";
 import Loading from "../../Loading/Loading";
+import SaveIcon from "@mui/icons-material/Save";
+import {IconButton} from "@material-ui/core";
+import {Add} from "@material-ui/icons";
+import {useHistory} from "react-router-dom";
+import ChallengeModel from "../../Models/Challenge";
 
 
 const ContentManager = () => {
   const [challenges, setChallenges] = useState([]);
-
+  const [waiting, setWaiting]  = useState(false);
+  const history = useHistory();
   const header = () => {
     return (
       <div style={{
@@ -30,27 +36,51 @@ const ContentManager = () => {
     )
   }
 
-  const addButtonBottom = () => {
+  const addButtonButton = () => {
     return (
-      <Button variant={'contained'}
-              style={{
-                color: '#CEEDE8',
-                backgroundColor: '#203F58',
-                borderRadius: 50,
-                width: 60,
-                height: 62,
-                fontSize: 35,
-                fontFamily: 'Montserrat',
-                position: 'fixed',
-                bottom: 20,
-                right: 20
-              }}>
-        +
-      </Button>
+      <IconButton
+        style={{padding: 15, margin: 15, position: 'fixed', bottom: 10, right: 10, backgroundColor: '#203F58'}}
+        onClick={
+            async () => {
+                setWaiting(true);
+                let next_id = await getNextChallengeId();
+                setWaiting(false);
+                let challenge = new ChallengeModel("Nuevo Desafio", [], next_id, false);
+                challenge.save();
+
+                let color = getColor(actualColor);
+                localStorage.setItem("challenge_is_new", "true");
+                localStorage.setItem("actualColor", color);
+                history.push('/units')
+            }
+        }>
+        <Add fontSize="inherit" style={{height: 30, width: 30, color: '#CEEDE8'}}/>
+      </IconButton>
     )
   }
 
-  const colors = ['#FED178', '#CAA7F3', '#C4FEAC', '#93D9F8'];
+  const saveButton = () => {
+    return (
+      <IconButton
+        style={{padding: 15, margin: 15, position: 'fixed', bottom: 80, right: 10, backgroundColor: '#203F58'}}
+        onClick={
+            async () => {
+                let challenge_to_save = ChallengeModel.getActualChallenge();
+                let response = await createChallenge(challenge_to_save);
+                if (response){
+                    console.log("challenge created")
+                }else{
+                    console.log("error")
+                }
+            }
+        }
+      >
+        <SaveIcon fontSize="inherit" style={{height: 30, width: 30, color: '#CEEDE8'}}/>
+      </IconButton>
+    )
+  }
+
+  const colors = ['#FED178', '#CAA7F3', '#93D9F8', '#C4FEAC'];
 
   useEffect(() => {
     async function loadChallenges() {
@@ -100,9 +130,10 @@ const ContentManager = () => {
           })}
         </div>
         : <Loading color={'#203F58'}/>}
-
+      {waiting ? <Loading color={'#203F58'}/> : ""}
       {header()}
-      {addButtonBottom()}
+      {addButtonButton()}
+      {saveButton()}
     </div>
   )
 }
