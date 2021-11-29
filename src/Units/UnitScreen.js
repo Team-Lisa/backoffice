@@ -107,7 +107,7 @@ export default function UnitScreen() {
   const saveButton = () => {
     return (
       <IconButton
-        style={{padding: 15, margin: 15, position: 'fixed', bottom: 80, right: 10, backgroundColor: actualColor}}
+        style={{padding: 15, margin: 15, position: 'fixed', bottom: actualData.published ? 10 : 80, right: 10, backgroundColor: actualColor}}
         onClick={
             async () => {
                 let challenge_to_save = ChallengeModel.getActualChallengeJSON();
