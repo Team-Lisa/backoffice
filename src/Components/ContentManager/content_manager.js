@@ -36,6 +36,19 @@ const ContentManager = () => {
     )
   }
 
+  const updateChallenges = (challenge) => {
+      let data = ChallengeModel.getActualChallengeJSON()
+      let challenges_to_update = [...challenges]
+      for (let i = 0; i < challenges_to_update.length; i++) {
+          let challenge_i = challenges_to_update[i];
+          if (challenge_i.challenge_id === data["id"]){
+              challenges_to_update[i] = data;
+              break;
+          }
+      }
+      setChallenges(challenges_to_update)
+    }
+
   const addButtonButton = () => {
     return (
       <IconButton
@@ -124,7 +137,7 @@ const ContentManager = () => {
             }
             return (
               <div>
-                <ChallengeTile color={color} key={index} data={value}/>
+                <ChallengeTile color={color} key={index} data={value} update={updateChallenges}/>
               </div>
             )
           })}
@@ -133,7 +146,6 @@ const ContentManager = () => {
       {waiting ? <Loading color={'#203F58'}/> : ""}
       {header()}
       {addButtonButton()}
-      {saveButton()}
     </div>
   )
 }

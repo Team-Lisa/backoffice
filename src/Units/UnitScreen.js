@@ -166,7 +166,7 @@ export default function UnitScreen() {
         })}
       </div>
       {header()}
-      {addButtonButton()}
+      {!actualData.published && addButtonButton()}
       {saveButton()}
     </div>
   );

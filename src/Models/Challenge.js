@@ -17,6 +17,11 @@ export default class ChallengeModel {
         localStorage.setItem("actualChallenge", JSON.stringify(data_to_save));
     }
 
+    publish(){
+        this.published = true;
+        this.save()
+    }
+
     updateUnitName(unit_id, name){
         for (let i = 0; i < this.units.length; i++) {
             let unit_i = this.units[i];
