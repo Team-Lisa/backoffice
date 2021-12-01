@@ -31,6 +31,7 @@ export default function ExercisesScreen() {
   const [correct, setCorrect] = useState(1);
   const [openModal, setOpenModal] = useState(false);
   const [exerciseId, setExerciseId] = useState("");
+  const [buttonDisabled, setButtonDisabled] = useState(true);
 
   let exercises_lessons = JSON.parse(localStorage.getItem("exercises_to_saved"));
   let data = exercises_lessons.hasOwnProperty(actualLessonData["id"]) ? exercises_lessons[actualLessonData["id"]] : [];
@@ -170,6 +171,9 @@ export default function ExercisesScreen() {
         <div>
           <div style={styles.optionView}>
             <TextField
+              required
+              error={answerFive.length <= 0}
+              label="Opción 5"
               style={styles.textFieldStyle}
               inputProps={styles.inputProps}
               InputLabelProps={styles.inputProps}
@@ -192,6 +196,9 @@ export default function ExercisesScreen() {
           </div>
           <div style={styles.optionView}>
             <TextField
+              required
+              error={answerSix.length <= 0}
+              label="Opción 6"
               style={styles.textFieldStyle}
               inputProps={styles.inputProps}
               InputLabelProps={styles.inputProps}
@@ -217,6 +224,33 @@ export default function ExercisesScreen() {
     }
   }
 
+  const buttonDisable = () => {
+    if (question.length === 0) {
+      return true;
+    }
+    if (answerOne.length === 0) {
+      return true;
+    }
+    if (answerTwo.length === 0) {
+      return true;
+    }
+    if (answerThree.length === 0) {
+      return true;
+    }
+    if (answerFour.length === 0) {
+      return true;
+    }
+
+    if (completeButton === 'white') {
+      if (answerFive.length === 0) {
+        return true;
+      }
+      if (answerSix.length === 0) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   const handleSave = async () => {
     let type = "";
@@ -330,6 +364,9 @@ export default function ExercisesScreen() {
                 Pregunta
               </h2>
               <TextField
+                required
+                error={question.length <= 0}
+                label=" "
                 style={{...styles.textFieldStyle, width: '100%'}}
                 inputProps={styles.inputProps}
                 InputLabelProps={styles.inputProps}
@@ -345,6 +382,9 @@ export default function ExercisesScreen() {
               <div>
                 <div style={styles.optionView}>
                   <TextField
+                    required
+                    error={answerOne.length <= 0}
+                    label="Opción 1"
                     style={styles.textFieldStyle}
                     inputProps={styles.inputProps}
                     InputLabelProps={styles.inputProps}
@@ -367,6 +407,9 @@ export default function ExercisesScreen() {
                 </div>
                 <div style={styles.optionView}>
                   <TextField
+                    required
+                    error={answerTwo.length <= 0}
+                    label="Opción 2"
                     style={styles.textFieldStyle}
                     inputProps={styles.inputProps}
                     InputLabelProps={styles.inputProps}
@@ -389,6 +432,9 @@ export default function ExercisesScreen() {
                 </div>
                 <div style={styles.optionView}>
                   <TextField
+                    required
+                    error={answerThree.length <= 0}
+                    label="Opción 3"
                     style={styles.textFieldStyle}
                     inputProps={styles.inputProps}
                     InputLabelProps={styles.inputProps}
@@ -411,6 +457,9 @@ export default function ExercisesScreen() {
                 </div>
                 <div style={styles.optionView}>
                   <TextField
+                    required
+                    error={answerFour.length <= 0}
+                    label="Opción 4"
                     style={styles.textFieldStyle}
                     inputProps={styles.inputProps}
                     InputLabelProps={styles.inputProps}
@@ -434,7 +483,9 @@ export default function ExercisesScreen() {
                 {options()}
               </div>
               <div style={{justifyContent: 'flex-end', display: 'flex', width: '100%'}}>
-                <Button variant="contained" style={styles.saveButton}
+                <Button variant="contained"
+                        disabled={buttonDisable()}
+                        style={buttonDisable() ? styles.disabledSaveButton : styles.saveButton}
                         onClick={async () => {
                           await handleSave();
                         }}>
@@ -489,17 +540,27 @@ const styles = {
     fontFamily: 'Montserrat',
     marginTop: 30
   },
+  disabledSaveButton: {
+    color: '#203F58',
+    backgroundColor: 'rgb(200,200,200)',
+    borderRadius: 10,
+    width: 150,
+    height: 50,
+    fontWeight: '700',
+    fontFamily: 'Montserrat',
+    marginTop: 30
+  },
   correctButtons: {
     borderRadius: 10,
     width: 150,
     height: 40,
     fontFamily: 'Montserrat',
   },
-  optionView: {display: 'flex', justifyContent: 'space-between'},
+  optionView: {display: 'flex', justifyContent: 'space-between', paddingTop: 10},
   modalContent: {
     content: {
-      height: '70%',
-      width: '70%',
+      height: '75%',
+      width: '75%',
       borderRadius: 20,
       backgroundColor: 'white',
       top: '15%',
