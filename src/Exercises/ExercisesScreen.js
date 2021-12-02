@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Button from "@material-ui/core/Button";
 import ExerciseTile from "./ExerciseTile";
 import Modal from "react-modal";
@@ -6,7 +6,7 @@ import {ButtonGroup, IconButton} from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import {useHistory} from "react-router-dom";
-import {Add} from "@material-ui/icons";
+import {Add, CheckCircle, Close, Error} from "@material-ui/icons";
 import SaveIcon from "@mui/icons-material/Save";
 import ChallengeModel from "../Models/Challenge";
 import ExerciseModel from "../Models/Exercise";
@@ -31,7 +31,8 @@ export default function ExercisesScreen() {
   const [correct, setCorrect] = useState(1);
   const [openModal, setOpenModal] = useState(false);
   const [exerciseId, setExerciseId] = useState("");
-  const [buttonDisabled, setButtonDisabled] = useState(true);
+  const [openMsgModal, setOpenMsgModal] = useState(true);
+  const [msgCorrect, setMsgCorrect] = useState(true);
 
   let exercises_lessons = JSON.parse(localStorage.getItem("exercises_to_saved"));
   let data = exercises_lessons.hasOwnProperty(actualLessonData["id"]) ? exercises_lessons[actualLessonData["id"]] : [];
@@ -80,7 +81,6 @@ export default function ExercisesScreen() {
     setExerciseId(data["exercise_id"])
     setOpenModal(true)
   }
-
 
   const onChangeQuestion = (event) => {
     setQuestion(event.target.value);
@@ -315,13 +315,91 @@ export default function ExercisesScreen() {
           })
         }
         setOpenModal(false);
+        setMsgCorrect(true);
+        setOpenMsgModal(true);
         cleanAll();
       }
     } else {
       setOpenModal(false);
+      setMsgCorrect(false);
+      setOpenMsgModal(true);
       cleanAll();
     }
   }
+
+  const modalResponse = () => {
+    if (msgCorrect) {
+      return (
+        <Modal isOpen={openMsgModal} centered style={{
+          content: {
+            height: 40,
+            width: '60%',
+            borderRadius: 20,
+            backgroundColor: '#C4FEAC',
+            top: '5%',
+            left: '20%',
+            right: 'auto',
+            bottom: 'auto',
+            alignItems: 'center'
+          }
+        }}>
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <div
+              style={{display: 'flex', alignItems: 'center', fontFamily: 'Montserrat', fontSize: 26, color: '#203F58'}}>
+              <CheckCircle fontSize="inherit" style={{height: 30, width: 30, color: '#203F58', marginRight: 10}}/>
+              Guardado exitoso
+            </div>
+            <IconButton
+              onClick={() => {
+                setOpenMsgModal(false);
+              }}>
+              <Close fontSize="inherit" style={{height: 15, width: 15, color: '#203F58'}}/>
+            </IconButton>
+          </div>
+        </Modal>
+      )
+    } else {
+      return (
+        <Modal isOpen={openMsgModal} centered style={{
+          content: {
+            height: 40,
+            width: '60%',
+            borderRadius: 20,
+            backgroundColor: '#ff3939',
+            top: '5%',
+            left: '20%',
+            right: 'auto',
+            bottom: 'auto',
+            alignItems: 'center'
+          }
+        }}>
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <div
+              style={{display: 'flex', alignItems: 'center', fontFamily: 'Montserrat', fontSize: 26, color: 'white'}}>
+              <Error fontSize="inherit" style={{height: 30, width: 30, color: 'white', marginRight: 10}}/>
+              Algo salio mal
+            </div>
+
+            <IconButton
+              onClick={() => {
+                setOpenMsgModal(false);
+              }}>
+              <Close fontSize="inherit" style={{height: 15, width: 15, color: 'white'}}/>
+            </IconButton>
+          </div>
+        </Modal>
+      )
+    }
+  }
+
+  useEffect(() => {
+    if (openMsgModal) {
+      setTimeout(() => {
+        setOpenMsgModal(false);
+      }, 5000)
+    }
+  }, [openMsgModal])
+
   const newExercise = () => {
     return (
       <Modal isOpen={openModal} centered style={styles.modalContent}>
@@ -523,6 +601,7 @@ export default function ExercisesScreen() {
       {header()}
       {!actualData.published && addButtonButton()}
       {newExercise()}
+      {modalResponse()}
     </div>
   );
 }
@@ -563,8 +642,8 @@ const styles = {
       width: '75%',
       borderRadius: 20,
       backgroundColor: 'white',
-      top: '15%',
-      left: '15%',
+      top: '10%',
+      left: '12%',
       right: 'auto',
       bottom: 'auto',
     }
