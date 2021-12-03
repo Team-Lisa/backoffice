@@ -284,6 +284,27 @@ export default function ExercisesScreen() {
         cleanAll();
       }
     } else {
+      if (edit){
+        ExerciseModel.editExercise(actualLessonData["id"], exerciseId, {
+          "lesson_id": actualLessonData["id"],
+          "exercise_type": type,
+          "question": question,
+          "options": options,
+          "correct_answer": options[correct - 1],
+          "exercise_id": exerciseId
+        })
+      }else{
+        exercise_id = ExerciseModel.getNextId(actualLessonData["id"]);
+        ExerciseModel.addNewExercises(actualLessonData["id"], {
+          "lesson_id": actualLessonData["id"],
+          "exercise_type": type,
+          "question": question,
+          "options": options,
+          "correct_answer": options[correct - 1],
+          "exercise_id": exercise_id
+        })
+      }
+
       setOpenModal(false);
       cleanAll();
     }
