@@ -64,6 +64,11 @@ const ContentManager = () => {
                 let color = getColor(actualColor);
                 localStorage.setItem("challenge_is_new", "true");
                 localStorage.setItem("actualColor", color);
+                localStorage.removeItem("exercises_to_saved");
+                localStorage.removeItem("actualUnitData");
+                localStorage.removeItem("new_unit");
+                localStorage.removeItem("actualLesson");
+
                 history.push('/units')
             }
         }>
