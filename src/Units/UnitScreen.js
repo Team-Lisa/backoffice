@@ -64,7 +64,6 @@ export default function UnitScreen() {
             <TextField
               style={{width: "30%", marginTop: 30, alignItems: 'flex-start'}}
               inputProps={{style: {fontFamily: 'Work Sans', color: '#203F58', fontSize: 42, fontWeight: 700}}}
-              InputLabelProps={{style: {fontFamily: 'Work Sans', color: '#203F58', fontSize: 42, fontWeight: 700}}}
               size="small"
               variant="outlined"
               margin="normal"
