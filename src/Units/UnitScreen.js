@@ -17,11 +17,39 @@ export default function UnitScreen() {
   const [actualData, setActualData] = useState(ChallengeModel.getActualChallenge);
   const [subtitle, setSubtitle] = useState(actualData.name);
   const units = actualData.units;
+  const challenges = JSON.parse(localStorage.getItem("challenges"));
+  let new_challenge = localStorage.getItem("challenge_is_new");
+
+  const checkChallengesName = (name) => {
+    for(let i = 0; i < challenges.length; i++){
+      if (new_challenge === "true") {
+        if(challenges[i]['name'].toLowerCase().localeCompare(name.toLowerCase()) === 0){
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  const [label, setLabel] = useState(actualData.name.length <= 0 ? "Nombre del Desafío Vacio" : checkChallengesName(actualData.name) ? "Nombre del Desafío Repetido" : "Nombre del Desafío");
+  const [openMsgModal, setOpenMsgModal] = useState(false);
+  const [msgCorrect, setMsgCorrect] = useState(true);
+  const [message, setMessage] = useState("El nombre de la Unidad no puede estar vacio")
+
   const history = useHistory();
 
   const onChangeSubtitle = (event) => {
     setSubtitle(event.target.value);
     actualData.name = event.target.value;
+    if (checkChallengesName(event.target.value)) {
+      setLabel("Nombre del Desafío Repetido");
+    } else {
+      if (event.target.value.length <= 0) {
+        setLabel("Nombre del Desafío Vacio");
+      } else {
+        setLabel("Nombre del Desafío");
+      }
+    }
     actualData.save();
   }
 
@@ -36,9 +64,9 @@ export default function UnitScreen() {
   }
 
   useEffect(
-      () => {
-        actualData.save()
-      }, [actualData]
+    () => {
+      actualData.save()
+    }, [actualData]
   )
 
   const header = () => {
@@ -62,6 +90,9 @@ export default function UnitScreen() {
               Desafío {actualData.challenge_id.slice(1)} -
             </h1>
             <TextField
+              required
+              label={label}
+              error={subtitle.length <= 0 ? true : checkChallengesName(subtitle)}
               style={{width: "30%", marginTop: 30, alignItems: 'flex-start'}}
               inputProps={{style: {fontFamily: 'Work Sans', color: '#203F58', fontSize: 42, fontWeight: 700}}}
               size="small"
@@ -80,16 +111,16 @@ export default function UnitScreen() {
     return (
       <IconButton
         style={{padding: 15, margin: 15, position: 'fixed', bottom: 10, right: 10, backgroundColor: actualColor}}
-        onClick={()=>{
+        onClick={() => {
           let next_id = actualData.challenge_id + "U" + (actualData.units.length + 1).toString()
           let new_unit = {
-             name: "Nueva Unidad",
-             id: next_id,
-             lessons: [],
-             exam: {
-               id: next_id + "X",
-               duration: 960
-             }
+            name: "Nueva Unidad",
+            id: next_id,
+            lessons: [],
+            exam: {
+              id: next_id + "X",
+              duration: 960
+            }
           }
           actualData.units.push(new_unit)
           actualData.save();
@@ -106,47 +137,52 @@ export default function UnitScreen() {
   const saveButton = () => {
     return (
       <IconButton
-        style={{padding: 15, margin: 15, position: 'fixed', bottom: actualData.published ? 10 : 80, right: 10, backgroundColor: actualColor}}
+        style={{
+          padding: 15,
+          margin: 15,
+          position: 'fixed',
+          bottom: actualData.published ? 10 : 80,
+          right: 10,
+          backgroundColor: actualColor
+        }}
         onClick={
-            async () => {
-                let challenge_to_save = ChallengeModel.getActualChallengeJSON();
-                let new_challenge = localStorage.getItem("challenge_is_new");
-                if (new_challenge !== "true"){
-                    let response = await saveChallenge(challenge_to_save["id"], challenge_to_save);
-                    if (response){
-                        console.log("challenge created")
-                        handleBack();
-                    }else{
-                        console.log("error")
-                    }
+          async () => {
+            let challenge_to_save = ChallengeModel.getActualChallengeJSON();
+            let new_challenge = localStorage.getItem("challenge_is_new");
+            if (new_challenge !== "true") {
+              let response = await saveChallenge(challenge_to_save["id"], challenge_to_save);
+              if (response) {
+                console.log("challenge created")
+                handleBack();
+              } else {
+                console.log("error")
+              }
 
-                }else{
-                    let response = await createChallenge(challenge_to_save);
-                    if (response){
-                        console.log("challenge created")
-                    }else{
-                        console.log("error")
-                    }
+            } else {
+              let response = await createChallenge(challenge_to_save);
+              if (response) {
+                console.log("challenge created")
+              } else {
+                console.log("error")
+              }
 
-                    let exercises = await ExerciseModel.getExercisesToSave();
-                    for (const lesson_id in exercises) {
-                        let exercises_i = exercises[lesson_id];
-                        for (let i = 0; i < exercises_i.length; i++) {
-                            let exercise = exercises_i[i]
-                            delete exercise["exercise_id"];
-                            let response_exercise = await createExercise(exercise);
-                            if (response_exercise){
-                                console.log("exercise created")
-                            }else{
-                                console.log("error exercise")
-                            }
-                        }
-                    handleBack();
-                    }
+              let exercises = await ExerciseModel.getExercisesToSave();
+              for (const lesson_id in exercises) {
+                let exercises_i = exercises[lesson_id];
+                for (let i = 0; i < exercises_i.length; i++) {
+                  let exercise = exercises_i[i]
+                  delete exercise["exercise_id"];
+                  let response_exercise = await createExercise(exercise);
+                  if (response_exercise) {
+                    console.log("exercise created")
+                  } else {
+                    console.log("error exercise")
+                  }
                 }
-
-
+                handleBack();
+              }
             }
+          }
         }>
         <SaveIcon fontSize="inherit" style={{height: 30, width: 30, color: '#203F58'}}/>
       </IconButton>

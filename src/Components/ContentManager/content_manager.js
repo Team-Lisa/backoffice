@@ -13,7 +13,7 @@ import ChallengeModel from "../../Models/Challenge";
 
 const ContentManager = () => {
   const [challenges, setChallenges] = useState([]);
-  const [waiting, setWaiting]  = useState(false);
+  const [waiting, setWaiting] = useState(false);
   const history = useHistory();
   const header = () => {
     return (
@@ -37,40 +37,44 @@ const ContentManager = () => {
   }
 
   const updateChallenges = (challenge) => {
-      let data = ChallengeModel.getActualChallengeJSON()
-      let challenges_to_update = [...challenges]
-      for (let i = 0; i < challenges_to_update.length; i++) {
-          let challenge_i = challenges_to_update[i];
-          if (challenge_i.challenge_id === data["id"]){
-              challenges_to_update[i] = data;
-              break;
-          }
+    let data = ChallengeModel.getActualChallengeJSON()
+    let challenges_to_update = [...challenges]
+    for (let i = 0; i < challenges_to_update.length; i++) {
+      let challenge_i = challenges_to_update[i];
+      if (challenge_i.challenge_id === data["id"]) {
+        challenges_to_update[i] = data;
+        break;
       }
-      setChallenges(challenges_to_update)
     }
+    setChallenges(challenges_to_update)
+  }
+
+  const saveChallengeLocalStorage = () => {
+    localStorage.setItem("challenges", JSON.stringify(challenges));
+  }
 
   const addButtonButton = () => {
     return (
       <IconButton
         style={{padding: 15, margin: 15, position: 'fixed', bottom: 10, right: 10, backgroundColor: '#203F58'}}
         onClick={
-            async () => {
-                setWaiting(true);
-                let next_id = await getNextChallengeId();
-                setWaiting(false);
-                let challenge = new ChallengeModel("Nuevo Desafio", [], next_id, false);
-                challenge.save();
+          async () => {
+            setWaiting(true);
+            let next_id = await getNextChallengeId();
+            setWaiting(false);
+            let challenge = new ChallengeModel("Nuevo Desafio", [], next_id, false);
+            challenge.save();
 
-                let color = getColor(actualColor);
-                localStorage.setItem("challenge_is_new", "true");
-                localStorage.setItem("actualColor", color);
-                localStorage.removeItem("exercises_to_saved");
-                localStorage.removeItem("actualUnitData");
-                localStorage.removeItem("new_unit");
-                localStorage.removeItem("actualLesson");
+            let color = getColor(actualColor);
+            localStorage.setItem("challenge_is_new", "true");
+            localStorage.setItem("actualColor", color);
+            localStorage.removeItem("exercises_to_saved");
+            localStorage.removeItem("actualUnitData");
+            localStorage.removeItem("new_unit");
+            localStorage.removeItem("actualLesson");
 
-                history.push('/units')
-            }
+            history.push('/units')
+          }
         }>
         <Add fontSize="inherit" style={{height: 30, width: 30, color: '#CEEDE8'}}/>
       </IconButton>
@@ -82,15 +86,15 @@ const ContentManager = () => {
       <IconButton
         style={{padding: 15, margin: 15, position: 'fixed', bottom: 80, right: 10, backgroundColor: '#203F58'}}
         onClick={
-            async () => {
-                let challenge_to_save = ChallengeModel.getActualChallenge();
-                let response = await createChallenge(challenge_to_save);
-                if (response){
-                    console.log("challenge created")
-                }else{
-                    console.log("error")
-                }
+          async () => {
+            let challenge_to_save = ChallengeModel.getActualChallenge();
+            let response = await createChallenge(challenge_to_save);
+            if (response) {
+              console.log("challenge created")
+            } else {
+              console.log("error")
             }
+          }
         }
       >
         <SaveIcon fontSize="inherit" style={{height: 30, width: 30, color: '#CEEDE8'}}/>
@@ -106,10 +110,9 @@ const ContentManager = () => {
         let challenges_to_load = await getChallenges();
         setChallenges(challenges_to_load);
       }
-
     }
 
-    loadChallenges()
+    loadChallenges().then().catch();
   }, [challenges])
 
   const YELLOW = '#FED178';
@@ -142,7 +145,7 @@ const ContentManager = () => {
             }
             return (
               <div>
-                <ChallengeTile color={color} key={index} data={value} update={updateChallenges}/>
+                <ChallengeTile color={color} key={index} data={value} update={updateChallenges} saveChallenges={saveChallengeLocalStorage}/>
               </div>
             )
           })}
