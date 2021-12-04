@@ -176,7 +176,6 @@ export default function ExercisesScreen() {
               label="Opción 5"
               style={styles.textFieldStyle}
               inputProps={styles.inputProps}
-              InputLabelProps={styles.inputProps}
               size="small"
               variant="outlined"
               margin="normal"
@@ -201,7 +200,6 @@ export default function ExercisesScreen() {
               label="Opción 6"
               style={styles.textFieldStyle}
               inputProps={styles.inputProps}
-              InputLabelProps={styles.inputProps}
               size="small"
               variant="outlined"
               margin="normal"
@@ -251,7 +249,6 @@ export default function ExercisesScreen() {
     }
     return false;
   }
-
 
   const saveExerciseLogic = (edit, type, options) => {
     if (edit) {
@@ -449,7 +446,6 @@ export default function ExercisesScreen() {
                 label=" "
                 style={{...styles.textFieldStyle, width: '100%'}}
                 inputProps={styles.inputProps}
-                InputLabelProps={styles.inputProps}
                 size="small"
                 variant="outlined"
                 margin="normal"
@@ -467,7 +463,6 @@ export default function ExercisesScreen() {
                     label="Opción 1"
                     style={styles.textFieldStyle}
                     inputProps={styles.inputProps}
-                    InputLabelProps={styles.inputProps}
                     size="small"
                     variant="outlined"
                     margin="normal"
@@ -492,7 +487,6 @@ export default function ExercisesScreen() {
                     label="Opción 2"
                     style={styles.textFieldStyle}
                     inputProps={styles.inputProps}
-                    InputLabelProps={styles.inputProps}
                     size="small"
                     variant="outlined"
                     margin="normal"
@@ -517,7 +511,6 @@ export default function ExercisesScreen() {
                     label="Opción 3"
                     style={styles.textFieldStyle}
                     inputProps={styles.inputProps}
-                    InputLabelProps={styles.inputProps}
                     size="small"
                     variant="outlined"
                     margin="normal"
@@ -542,7 +535,6 @@ export default function ExercisesScreen() {
                     label="Opción 4"
                     style={styles.textFieldStyle}
                     inputProps={styles.inputProps}
-                    InputLabelProps={styles.inputProps}
                     size="small"
                     variant="outlined"
                     margin="normal"

@@ -4,7 +4,6 @@ export default class ChallengeModel {
         this.units = units;
         this.challenge_id = challenge_id;
         this.published = published;
-
     }
 
     save(){
@@ -63,5 +62,16 @@ export default class ChallengeModel {
         data["id"] = data["challenge_id"];
         delete data["challenge_id"];
         return data;
+    }
+
+    unitNameExist(newUnit, id){
+        for(let i = 0; i < this.units.length; i++){
+             if(id !== this.units[i]['id']){
+                 if(this.units[i]['name'].toLowerCase().localeCompare(newUnit.toLowerCase()) === 0){
+                     return true;
+                 }
+             }
+        }
+        return false
     }
 }
