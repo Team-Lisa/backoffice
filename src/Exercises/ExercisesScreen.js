@@ -31,7 +31,7 @@ export default function ExercisesScreen() {
   const [correct, setCorrect] = useState(1);
   const [openModal, setOpenModal] = useState(false);
   const [exerciseId, setExerciseId] = useState("");
-  const [openMsgModal, setOpenMsgModal] = useState(true);
+  const [openMsgModal, setOpenMsgModal] = useState(false);
   const [msgCorrect, setMsgCorrect] = useState(true);
 
   let exercises_lessons = JSON.parse(localStorage.getItem("exercises_to_saved"));
@@ -252,6 +252,34 @@ export default function ExercisesScreen() {
     return false;
   }
 
+
+  const saveExerciseLogic = (edit, type, options) => {
+    if (edit) {
+      ExerciseModel.editExercise(actualLessonData["id"], exerciseId, {
+        "lesson_id": actualLessonData["id"],
+        "exercise_type": type,
+        "question": question,
+        "options": options,
+        "correct_answer": options[correct - 1],
+        "exercise_id": exerciseId
+      })
+    } else {
+      const exercise_id = ExerciseModel.getNextId(actualLessonData["id"]);
+      ExerciseModel.addNewExercises(actualLessonData["id"], {
+        "lesson_id": actualLessonData["id"],
+        "exercise_type": type,
+        "question": question,
+        "options": options,
+        "correct_answer": options[correct - 1],
+        "exercise_id": exercise_id
+      })
+    }
+    setOpenModal(false);
+    setMsgCorrect(true);
+    setOpenMsgModal(true);
+    cleanAll();
+  }
+
   const handleSave = async () => {
     let type = "";
 
@@ -292,59 +320,12 @@ export default function ExercisesScreen() {
         "question": question,
         "options": options,
         "correct_answer": options[correct - 1],
-      }, exercise_id)
+      }, exercise_id);
       if (response_exercises) {
-        if (edit) {
-          ExerciseModel.editExercise(actualLessonData["id"], exerciseId, {
-            "lesson_id": actualLessonData["id"],
-            "exercise_type": type,
-            "question": question,
-            "options": options,
-            "correct_answer": options[correct - 1],
-            "exercise_id": exerciseId
-          })
-        } else {
-          exercise_id = ExerciseModel.getNextId(actualLessonData["id"]);
-          ExerciseModel.addNewExercises(actualLessonData["id"], {
-            "lesson_id": actualLessonData["id"],
-            "exercise_type": type,
-            "question": question,
-            "options": options,
-            "correct_answer": options[correct - 1],
-            "exercise_id": exercise_id
-          })
-        }
-        setOpenModal(false);
-        setMsgCorrect(true);
-        setOpenMsgModal(true);
-        cleanAll();
+        saveExerciseLogic(edit, type, options);
       }
     } else {
-      if (edit){
-        ExerciseModel.editExercise(actualLessonData["id"], exerciseId, {
-          "lesson_id": actualLessonData["id"],
-          "exercise_type": type,
-          "question": question,
-          "options": options,
-          "correct_answer": options[correct - 1],
-          "exercise_id": exerciseId
-        })
-      }else{
-        exercise_id = ExerciseModel.getNextId(actualLessonData["id"]);
-        ExerciseModel.addNewExercises(actualLessonData["id"], {
-          "lesson_id": actualLessonData["id"],
-          "exercise_type": type,
-          "question": question,
-          "options": options,
-          "correct_answer": options[correct - 1],
-          "exercise_id": exercise_id
-        })
-      }
-
-      setOpenModal(false);
-      setMsgCorrect(false);
-      setOpenMsgModal(true);
-      cleanAll();
+      saveExerciseLogic(edit, type, options);
     }
   }
 
