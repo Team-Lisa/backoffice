@@ -7,34 +7,61 @@ import {IconButton} from "@material-ui/core";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import {useHistory} from "react-router-dom";
 import Loading from "../Loading/Loading";
-import {Add} from "@material-ui/icons";
+import {Add, CheckCircle, Close, Error} from "@material-ui/icons";
 import SaveIcon from "@mui/icons-material/Save";
 import ChallengeModel from "../Models/Challenge";
 import ExerciseModel from "../Models/Exercise";
 import {createChallenge, saveChallenge} from "../Communication/challenge_controller";
 import {createExercise} from "../Communication/exercises_controller";
+import Modal from "react-modal";
 
 export default function LessonScreen() {
   const actualColor = localStorage.getItem('actualColor');
   const actualData = ChallengeModel.getActualChallenge();
   const [actualUnitData, setActualUnitData] = useState(JSON.parse(localStorage.getItem('actualUnitData')));
-  console.log(actualUnitData);
+  const [label, setLabel] = useState(actualUnitData.name.length <= 0 ? "Nombre de la Unidad Vacio" : actualData.unitNameExist(actualUnitData.name, actualUnitData.id) ? "Nombre de Unidad Repetido" : "Nombre de la Unidad");
+  const [openMsgModal, setOpenMsgModal] = useState(false);
+  const [msgCorrect, setMsgCorrect] = useState(true);
+  const [message, setMessage] = useState("El nombre de la Unidad no puede estar vacio")
+
   const [subtitle, setSubtitle] = useState(actualUnitData.name);
   const history = useHistory();
   const lessons = actualUnitData['lessons'];
   const exam = actualUnitData["exam"]
+
   const onChangeSubtitle = (event) => {
     setSubtitle(event.target.value);
+    if (actualData.unitNameExist(event.target.value, actualUnitData.id)) {
+      setLabel("Nombre de Unidad Repetido");
+    } else {
+      if (event.target.value.length <= 0) {
+        setLabel("Nombre de la Unidad Vacio");
+      } else {
+        setLabel("Nombre de la Unidad");
+      }
+    }
     actualUnitData.name = event.target.value;
     actualData.updateUnitName(actualUnitData.id, event.target.value);
     localStorage.setItem("actualUnitData", JSON.stringify(actualUnitData));
   }
 
+  useEffect(() => {
+    if (openMsgModal) {
+      setTimeout(() => {
+        setOpenMsgModal(false);
+      }, 5000)
+    }
+  }, [openMsgModal])
+
   const handleBack = () => {
+    if (label.localeCompare("Nombre de la Unidad") !== 0) {
+      setMsgCorrect(false);
+      setMessage(subtitle.length === 0 ? "El Nombre de la Unidad no puede estar Vacio" : "Ya existe otra Unidad con ese Nombre en este Desafío");
+      setOpenMsgModal(true);
+      return;
+    }
     history.push('/units')
   }
-
-  console.log(actualData)
 
   useEffect(
     () => {
@@ -66,8 +93,8 @@ export default function LessonScreen() {
           </div>
           <TextField
             required
-            label="Nombre de la Unidad"
-            error={subtitle.length <= 0}
+            label={label}
+            error={subtitle.length <= 0 ? true : actualData.unitNameExist(subtitle, actualUnitData.id)}
             style={{width: "30%", marginTop: 0, marginLeft: 50}}
             inputProps={{style: {fontFamily: 'Montserrat', color: '#203F58', fontWeight: 700}}}
             size="small"
@@ -129,23 +156,40 @@ export default function LessonScreen() {
         }}
         onClick={
           async () => {
+            if (label.localeCompare("Nombre de la Unidad") !== 0) {
+              setMsgCorrect(false);
+              setMessage(subtitle.length === 0 ? "El Nombre de la Unidad no puede estar Vacio" : "Ya existe otra Unidad con ese Nombre en este Desafío");
+              setOpenMsgModal(true);
+              return;
+            }
+
             let challenge_to_save = ChallengeModel.getActualChallengeJSON();
             let new_challenge = localStorage.getItem("challenge_is_new");
             if (new_challenge !== "true") {
               let response = await saveChallenge(challenge_to_save["id"], challenge_to_save);
               if (response) {
-                console.log("challenge created")
-                handleBack();
+                console.log("challenge created 1")
+                setMsgCorrect(true);
+                setOpenMsgModal(true);
+                // handleBack();
               } else {
                 console.log("error")
+                setMsgCorrect(false);
+                setMessage("Algo Salio Mal")
+                setOpenMsgModal(true);
               }
 
             } else {
               let response = await createChallenge(challenge_to_save);
               if (response) {
-                console.log("challenge created")
+                console.log("challenge created 2")
+                setMsgCorrect(true);
+                setOpenMsgModal(true);
               } else {
                 console.log("error")
+                setMsgCorrect(false);
+                setMessage("Algo Salio Mal")
+                setOpenMsgModal(true);
               }
 
               let exercises = await ExerciseModel.getExercisesToSave();
@@ -156,22 +200,90 @@ export default function LessonScreen() {
                   delete exercise["exercise_id"];
                   let response_exercise = await createExercise(exercise);
                   if (response_exercise) {
-                    console.log("exercise created")
+                    console.log("exercise created 3")
+                    setMsgCorrect(true);
+                    setOpenMsgModal(true);
                   } else {
                     console.log("error exercise")
+                    setMsgCorrect(false);
+                    setMessage("Algo Salio Mal")
+                    setOpenMsgModal(true);
                   }
                 }
-                handleBack();
+                // handleBack();
               }
             }
-
-
           }
         }
       >
         <SaveIcon fontSize="inherit" style={{height: 30, width: 30, color: '#203F58'}}/>
       </IconButton>
     )
+  }
+
+  const modalResponse = () => {
+    if (msgCorrect) {
+      return (
+        <Modal isOpen={openMsgModal} centered style={{
+          content: {
+            height: 40,
+            width: '60%',
+            borderRadius: 20,
+            backgroundColor: '#C4FEAC',
+            top: '5%',
+            left: '20%',
+            right: 'auto',
+            bottom: 'auto',
+            alignItems: 'center'
+          }
+        }}>
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <div
+              style={{display: 'flex', alignItems: 'center', fontFamily: 'Montserrat', fontSize: 26, color: '#203F58'}}>
+              <CheckCircle fontSize="inherit" style={{height: 30, width: 30, color: '#203F58', marginRight: 10}}/>
+              Guardado exitoso
+            </div>
+            <IconButton
+              onClick={() => {
+                setOpenMsgModal(false);
+              }}>
+              <Close fontSize="inherit" style={{height: 15, width: 15, color: '#203F58'}}/>
+            </IconButton>
+          </div>
+        </Modal>
+      )
+    } else {
+      return (
+        <Modal isOpen={openMsgModal} centered style={{
+          content: {
+            height: 40,
+            width: '60%',
+            borderRadius: 20,
+            backgroundColor: '#ff3939',
+            top: '5%',
+            left: '20%',
+            right: 'auto',
+            bottom: 'auto',
+            alignItems: 'center'
+          }
+        }}>
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <div
+              style={{display: 'flex', alignItems: 'center', fontFamily: 'Montserrat', fontSize: 26, color: 'white'}}>
+              <Error fontSize="inherit" style={{height: 30, width: 30, color: 'white', marginRight: 10}}/>
+              {message}
+            </div>
+
+            <IconButton
+              onClick={() => {
+                setOpenMsgModal(false);
+              }}>
+              <Close fontSize="inherit" style={{height: 15, width: 15, color: 'white'}}/>
+            </IconButton>
+          </div>
+        </Modal>
+      )
+    }
   }
 
   return (
@@ -211,6 +323,7 @@ export default function LessonScreen() {
       {header()}
       {!actualData.published && addButtonButton()}
       {saveButton()}
+      {modalResponse()}
     </div>
   );
 }

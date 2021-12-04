@@ -250,7 +250,6 @@ export default function ExercisesScreen() {
     return false;
   }
 
-
   const saveExerciseLogic = (edit, type, options) => {
     if (edit) {
       ExerciseModel.editExercise(actualLessonData["id"], exerciseId, {
