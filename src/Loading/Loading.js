@@ -2,7 +2,14 @@ import Loader from "react-loader-spinner";
 import React from "react";
 
 export default function Loading({color}) {
-  return (
+
+  return(
+    <div style={{display: 'flex', justifyContent: 'center', paddingTop: '20%'}}>
+      <img src="Loading.gif" width="200" height="200"  alt={"Loading"}/>
+    </div>
+  )
+
+  /*return (
     <div style={{
       display: 'flex',
       justifyContent: 'center',
@@ -17,5 +24,5 @@ export default function Loading({color}) {
         width={60}
       />
     </div>
-  )
+  )*/
 }

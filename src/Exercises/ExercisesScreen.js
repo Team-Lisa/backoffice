@@ -696,5 +696,5 @@ const styles = {
     backgroundColor: 'rgba(255,255,255,0.9)'
   },
   headerTitle: {fontFamily: 'Work Sans', color: '#203F58', fontSize: 42, marginBottom: 0},
-  headerSubtitle: {fontFamily: 'Montserrat', color: '#203F58', fontWeight: 700, marginTop: 0, paddingLeft: 50}
+  headerSubtitle: {fontFamily: 'Montserrat', color: '#203F58', fontWeight: 700, marginTop: 0, paddingLeft: 52}
 }

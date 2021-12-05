@@ -150,8 +150,8 @@ const ContentManager = () => {
             )
           })}
         </div>
-        : <Loading color={'#203F58'}/>}
-      {waiting ? <Loading color={'#203F58'}/> : ""}
+        : <Loading/>}
+      {waiting ? <Loading/> : ""}
       {header()}
       {addButtonButton()}
     </div>
