@@ -82,12 +82,12 @@ export const saveChallenge = (challenge_id, challenge) => {
         body: JSON.stringify(challenge)
     }).then(
         response => {
-            response.json()
-        }
-    ).then(
-        data => {
-            console.log(data);
-            return data.hasOwnProperty("challenge");
+            return response.json().then(
+                data => {
+                    console.log(data);
+                    return data.hasOwnProperty("challenge");
+                }
+            )         
         }
     )
 }

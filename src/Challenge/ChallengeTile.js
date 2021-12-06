@@ -4,6 +4,7 @@ import Modal from "react-modal";
 import {Redirect, useHistory} from "react-router-dom";
 import ChallengeModel from "../Models/Challenge";
 import {saveChallenge} from "../Communication/challenge_controller";
+import PublishedModal from "../Challenge/PublishedModal.js";
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -20,7 +21,6 @@ export default function ChallengeTile({color, data, update}) {
     history.push('/units')
   };
   const [publishConfirmation, setPublishConfirmation] = useState(false);
-  const [unpublishConfirmation, setUnpublishConfirmation] = useState(false);
 
   const handleClickPublishConfirmation = () => {
     setPublishConfirmation(true);
@@ -29,43 +29,6 @@ export default function ChallengeTile({color, data, update}) {
   const handlePublishConfirmationClose = () => {
     setPublishConfirmation(false);
   };
-
-  const handleClickUnpublishConfirmation = () => {
-    setUnpublishConfirmation(true);
-  };
-
-  const handleUnpublishConfirmationClose = () => {
-    setUnpublishConfirmation(false);
-  };
-
-  const publishChallenge = async () => {
-      actualData.publish();
-      let data = ChallengeModel.getActualChallengeJSON()
-      let response = await saveChallenge(actualData.challenge_id, data);
-      console.log(response, "RESPONSE")
-      if (!response) {
-        console.log("error al publicar");
-      }
-      console.log(response)
-      setActualData(actualData);
-      update();
-      handlePublishConfirmationClose();
-  }
-
-  const unpublishChallenge = async () => {
-    actualData.unpublish();
-    let data = ChallengeModel.getActualChallengeJSON()
-    let response = await saveChallenge(actualData.challenge_id, data);
-    console.log(response, "RESPONSE")
-    if (!response) {
-      console.log("error al publicar");
-    }
-    console.log(response)
-    setActualData(actualData);
-    update();
-    handleUnpublishConfirmationClose();
-}
-
 
   const publishButton = () => {
     if (actualData.published) {
@@ -78,7 +41,7 @@ export default function ChallengeTile({color, data, update}) {
           fontFamily: 'Montserrat',
         }}
           onClick={
-            handleClickUnpublishConfirmation
+            handleClickPublishConfirmation
           }
         >
           Publicado
@@ -137,145 +100,8 @@ export default function ChallengeTile({color, data, update}) {
           {publishButton()}
         </div>
         <div>
-          <Dialog
-              open={publishConfirmation}
-              onClose={handlePublishConfirmationClose}
-              centered style={{
-                content: {
-                  height: '55%',
-                  width: '60%',
-                  borderRadius: 30,
-                  top: '5%',
-                  left: '20%',
-                  right: 'auto',
-                  bottom: 'auto',
-                  alignItems: 'center'
-                }
-          }}
-            >
-            <DialogTitle style={{
-              fontFamily: 'Work Sans',
-              color: '#203F58',
-              fontSize: 25,
-              margin: 0,
-              paddingBottom: 20,
-              fontWeight: 'bold'
-            }}>
-              {"¿Estás seguro que quieres publicar el desafío '" + actualData.name + "'?"}
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText style={{
-                fontFamily: 'Work Sans',
-                color: '#1c384f',
-                fontSize: 20,
-                margin: 0,
-                paddingBottom: 10
-              }}>
-                Una vez publicado no podrás agregar más unidades ni lecciones.
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button style={{
-                color: '#203F58',
-                backgroundColor: '#C4FEAC',
-                borderRadius: 10,
-                width: 150,
-                height: 50,
-                fontFamily: 'Montserrat',
-                marginTop: 10,
-                fontWeight: 'bold',
-                marginBottom: 12,
-                marginRight: 5
-              }}
-              onClick={publishChallenge} autoFocus>
-                Publicar
-              </Button>
-              <Button style={{
-                color: '    #FFFFFF',
-                backgroundColor: '#ff3939',
-                borderRadius: 10,
-                width: 150,
-                height: 50,
-                fontFamily: 'Montserrat',
-                marginTop: 10,
-                fontWeight: 'bold',
-                marginBottom: 12,
-                marginRight: 5
-              }}
-              onClick={handlePublishConfirmationClose}>Cancelar</Button>
-            </DialogActions>
-          </Dialog>
-          </div>
-          <div>
-          <Dialog
-              open={unpublishConfirmation}
-              onClose={handleUnpublishConfirmationClose}
-              centered style={{
-                content: {
-                  height: '55%',
-                  width: '60%',
-                  borderRadius: 30,
-                  top: '5%',
-                  left: '20%',
-                  right: 'auto',
-                  bottom: 'auto',
-                  alignItems: 'center'
-                }
-          }}
-            >
-            <DialogTitle style={{
-              fontFamily: 'Work Sans',
-              color: '#203F58',
-              fontSize: 25,
-              margin: 0,
-              paddingBottom: 20,
-              fontWeight: 'bold'
-            }}>
-              {"¿Estás seguro que quieres despublicar el desafío '" + actualData.name + "'?"}
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText style={{
-                fontFamily: 'Work Sans',
-                color: '#1c384f',
-                fontSize: 20,
-                margin: 0,
-                paddingBottom: 10
-              }}>
-                Una vez despublicado no le aparecera a los usuarios de la aplicacion.
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button style={{
-                color: '#203F58',
-                backgroundColor: '#C4FEAC',
-                borderRadius: 10,
-                width: 150,
-                height: 50,
-                fontFamily: 'Montserrat',
-                marginTop: 10,
-                fontWeight: 'bold',
-                marginBottom: 12,
-                marginRight: 5
-              }}
-              onClick={unpublishChallenge} autoFocus>
-                Despublicar
-              </Button>
-              <Button style={{
-                color: '    #FFFFFF',
-                backgroundColor: '#ff3939',
-                borderRadius: 10,
-                width: 150,
-                height: 50,
-                fontFamily: 'Montserrat',
-                marginTop: 10,
-                fontWeight: 'bold',
-                marginBottom: 12,
-                marginRight: 5
-              }}
-              onClick={handleUnpublishConfirmationClose}>Cancelar</Button>
-            </DialogActions>
-          </Dialog>
-          </div>
+          {(publishConfirmation === true) ? <PublishedModal unpublish={actualData.published} data={actualData} update={update} closeModal={setPublishConfirmation} setData={setActualData}/> : null}
+        </div>
       </div>
     </div>
   )
