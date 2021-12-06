@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Button from "@material-ui/core/Button";
 import ExerciseTile from "./ExerciseTile";
 import Modal from "react-modal";
@@ -6,7 +6,7 @@ import {ButtonGroup, IconButton} from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import {useHistory} from "react-router-dom";
-import {Add} from "@material-ui/icons";
+import {Add, CheckCircle, Close, Error} from "@material-ui/icons";
 import SaveIcon from "@mui/icons-material/Save";
 import ChallengeModel from "../Models/Challenge";
 import ExerciseModel from "../Models/Exercise";
@@ -31,6 +31,8 @@ export default function ExercisesScreen() {
   const [correct, setCorrect] = useState(1);
   const [openModal, setOpenModal] = useState(false);
   const [exerciseId, setExerciseId] = useState("");
+  const [openMsgModal, setOpenMsgModal] = useState(false);
+  const [msgCorrect, setMsgCorrect] = useState(true);
 
   let exercises_lessons = JSON.parse(localStorage.getItem("exercises_to_saved"));
   let data = exercises_lessons.hasOwnProperty(actualLessonData["id"]) ? exercises_lessons[actualLessonData["id"]] : [];
@@ -79,7 +81,6 @@ export default function ExercisesScreen() {
     setExerciseId(data["exercise_id"])
     setOpenModal(true)
   }
-
 
   const onChangeQuestion = (event) => {
     setQuestion(event.target.value);
@@ -170,9 +171,11 @@ export default function ExercisesScreen() {
         <div>
           <div style={styles.optionView}>
             <TextField
+              required
+              error={answerFive.length <= 0}
+              label="Opción 5"
               style={styles.textFieldStyle}
               inputProps={styles.inputProps}
-              InputLabelProps={styles.inputProps}
               size="small"
               variant="outlined"
               margin="normal"
@@ -192,9 +195,11 @@ export default function ExercisesScreen() {
           </div>
           <div style={styles.optionView}>
             <TextField
+              required
+              error={answerSix.length <= 0}
+              label="Opción 6"
               style={styles.textFieldStyle}
               inputProps={styles.inputProps}
-              InputLabelProps={styles.inputProps}
               size="small"
               variant="outlined"
               margin="normal"
@@ -217,6 +222,60 @@ export default function ExercisesScreen() {
     }
   }
 
+  const buttonDisable = () => {
+    if (question.length === 0) {
+      return true;
+    }
+    if (answerOne.length === 0) {
+      return true;
+    }
+    if (answerTwo.length === 0) {
+      return true;
+    }
+    if (answerThree.length === 0) {
+      return true;
+    }
+    if (answerFour.length === 0) {
+      return true;
+    }
+
+    if (completeButton === 'white') {
+      if (answerFive.length === 0) {
+        return true;
+      }
+      if (answerSix.length === 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  const saveExerciseLogic = (edit, type, options) => {
+    if (edit) {
+      ExerciseModel.editExercise(actualLessonData["id"], exerciseId, {
+        "lesson_id": actualLessonData["id"],
+        "exercise_type": type,
+        "question": question,
+        "options": options,
+        "correct_answer": options[correct - 1],
+        "exercise_id": exerciseId
+      })
+    } else {
+      const exercise_id = ExerciseModel.getNextId(actualLessonData["id"]);
+      ExerciseModel.addNewExercises(actualLessonData["id"], {
+        "lesson_id": actualLessonData["id"],
+        "exercise_type": type,
+        "question": question,
+        "options": options,
+        "correct_answer": options[correct - 1],
+        "exercise_id": exercise_id
+      })
+    }
+    setOpenModal(false);
+    setMsgCorrect(true);
+    setOpenMsgModal(true);
+    cleanAll();
+  }
 
   const handleSave = async () => {
     let type = "";
@@ -258,36 +317,88 @@ export default function ExercisesScreen() {
         "question": question,
         "options": options,
         "correct_answer": options[correct - 1],
-      }, exercise_id)
+      }, exercise_id);
       if (response_exercises) {
-        if (edit) {
-          ExerciseModel.editExercise(actualLessonData["id"], exerciseId, {
-            "lesson_id": actualLessonData["id"],
-            "exercise_type": type,
-            "question": question,
-            "options": options,
-            "correct_answer": options[correct - 1],
-            "exercise_id": exerciseId
-          })
-        } else {
-          exercise_id = ExerciseModel.getNextId(actualLessonData["id"]);
-          ExerciseModel.addNewExercises(actualLessonData["id"], {
-            "lesson_id": actualLessonData["id"],
-            "exercise_type": type,
-            "question": question,
-            "options": options,
-            "correct_answer": options[correct - 1],
-            "exercise_id": exercise_id
-          })
-        }
-        setOpenModal(false);
-        cleanAll();
+        saveExerciseLogic(edit, type, options);
       }
     } else {
-      setOpenModal(false);
-      cleanAll();
+      saveExerciseLogic(edit, type, options);
     }
   }
+
+  const modalResponse = () => {
+    if (msgCorrect) {
+      return (
+        <Modal isOpen={openMsgModal} centered style={{
+          content: {
+            height: 40,
+            width: '60%',
+            borderRadius: 20,
+            backgroundColor: '#C4FEAC',
+            top: '5%',
+            left: '20%',
+            right: 'auto',
+            bottom: 'auto',
+            alignItems: 'center'
+          }
+        }}>
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <div
+              style={{display: 'flex', alignItems: 'center', fontFamily: 'Montserrat', fontSize: 26, color: '#203F58'}}>
+              <CheckCircle fontSize="inherit" style={{height: 30, width: 30, color: '#203F58', marginRight: 10}}/>
+              Guardado exitoso
+            </div>
+            <IconButton
+              onClick={() => {
+                setOpenMsgModal(false);
+              }}>
+              <Close fontSize="inherit" style={{height: 15, width: 15, color: '#203F58'}}/>
+            </IconButton>
+          </div>
+        </Modal>
+      )
+    } else {
+      return (
+        <Modal isOpen={openMsgModal} centered style={{
+          content: {
+            height: 40,
+            width: '60%',
+            borderRadius: 20,
+            backgroundColor: '#ff3939',
+            top: '5%',
+            left: '20%',
+            right: 'auto',
+            bottom: 'auto',
+            alignItems: 'center'
+          }
+        }}>
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <div
+              style={{display: 'flex', alignItems: 'center', fontFamily: 'Montserrat', fontSize: 26, color: 'white'}}>
+              <Error fontSize="inherit" style={{height: 30, width: 30, color: 'white', marginRight: 10}}/>
+              Algo salio mal
+            </div>
+
+            <IconButton
+              onClick={() => {
+                setOpenMsgModal(false);
+              }}>
+              <Close fontSize="inherit" style={{height: 15, width: 15, color: 'white'}}/>
+            </IconButton>
+          </div>
+        </Modal>
+      )
+    }
+  }
+
+  useEffect(() => {
+    if (openMsgModal) {
+      setTimeout(() => {
+        setOpenMsgModal(false);
+      }, 5000)
+    }
+  }, [openMsgModal])
+
   const newExercise = () => {
     return (
       <Modal isOpen={openModal} centered style={styles.modalContent}>
@@ -330,9 +441,11 @@ export default function ExercisesScreen() {
                 Pregunta
               </h2>
               <TextField
+                required
+                error={question.length <= 0}
+                label=" "
                 style={{...styles.textFieldStyle, width: '100%'}}
                 inputProps={styles.inputProps}
-                InputLabelProps={styles.inputProps}
                 size="small"
                 variant="outlined"
                 margin="normal"
@@ -345,9 +458,11 @@ export default function ExercisesScreen() {
               <div>
                 <div style={styles.optionView}>
                   <TextField
+                    required
+                    error={answerOne.length <= 0}
+                    label="Opción 1"
                     style={styles.textFieldStyle}
                     inputProps={styles.inputProps}
-                    InputLabelProps={styles.inputProps}
                     size="small"
                     variant="outlined"
                     margin="normal"
@@ -367,9 +482,11 @@ export default function ExercisesScreen() {
                 </div>
                 <div style={styles.optionView}>
                   <TextField
+                    required
+                    error={answerTwo.length <= 0}
+                    label="Opción 2"
                     style={styles.textFieldStyle}
                     inputProps={styles.inputProps}
-                    InputLabelProps={styles.inputProps}
                     size="small"
                     variant="outlined"
                     margin="normal"
@@ -389,9 +506,11 @@ export default function ExercisesScreen() {
                 </div>
                 <div style={styles.optionView}>
                   <TextField
+                    required
+                    error={answerThree.length <= 0}
+                    label="Opción 3"
                     style={styles.textFieldStyle}
                     inputProps={styles.inputProps}
-                    InputLabelProps={styles.inputProps}
                     size="small"
                     variant="outlined"
                     margin="normal"
@@ -411,9 +530,11 @@ export default function ExercisesScreen() {
                 </div>
                 <div style={styles.optionView}>
                   <TextField
+                    required
+                    error={answerFour.length <= 0}
+                    label="Opción 4"
                     style={styles.textFieldStyle}
                     inputProps={styles.inputProps}
-                    InputLabelProps={styles.inputProps}
                     size="small"
                     variant="outlined"
                     margin="normal"
@@ -434,7 +555,9 @@ export default function ExercisesScreen() {
                 {options()}
               </div>
               <div style={{justifyContent: 'flex-end', display: 'flex', width: '100%'}}>
-                <Button variant="contained" style={styles.saveButton}
+                <Button variant="contained"
+                        disabled={buttonDisable()}
+                        style={buttonDisable() ? styles.disabledSaveButton : styles.saveButton}
                         onClick={async () => {
                           await handleSave();
                         }}>
@@ -472,6 +595,7 @@ export default function ExercisesScreen() {
       {header()}
       {!actualData.published && addButtonButton()}
       {newExercise()}
+      {modalResponse()}
     </div>
   );
 }
@@ -489,21 +613,31 @@ const styles = {
     fontFamily: 'Montserrat',
     marginTop: 30
   },
+  disabledSaveButton: {
+    color: '#203F58',
+    backgroundColor: 'rgb(200,200,200)',
+    borderRadius: 10,
+    width: 150,
+    height: 50,
+    fontWeight: '700',
+    fontFamily: 'Montserrat',
+    marginTop: 30
+  },
   correctButtons: {
     borderRadius: 10,
     width: 150,
     height: 40,
     fontFamily: 'Montserrat',
   },
-  optionView: {display: 'flex', justifyContent: 'space-between'},
+  optionView: {display: 'flex', justifyContent: 'space-between', paddingTop: 10},
   modalContent: {
     content: {
-      height: '70%',
-      width: '70%',
+      height: '75%',
+      width: '75%',
       borderRadius: 20,
       backgroundColor: 'white',
-      top: '15%',
-      left: '15%',
+      top: '10%',
+      left: '12%',
       right: 'auto',
       bottom: 'auto',
     }
@@ -562,5 +696,5 @@ const styles = {
     backgroundColor: 'rgba(255,255,255,0.9)'
   },
   headerTitle: {fontFamily: 'Work Sans', color: '#203F58', fontSize: 42, marginBottom: 0},
-  headerSubtitle: {fontFamily: 'Montserrat', color: '#203F58', fontWeight: 700, marginTop: 0, paddingLeft: 50}
+  headerSubtitle: {fontFamily: 'Montserrat', color: '#203F58', fontWeight: 700, marginTop: 0, paddingLeft: 52}
 }
