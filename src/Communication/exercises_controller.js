@@ -1,4 +1,4 @@
-const url = 'http://idiomaplay-gateway.herokuapp.com/';
+const url = 'https://idiomaplay-gateway.herokuapp.com/';
 
 export const createExercise = (exercise) => {
   return fetch(url + "exercises", {
@@ -9,11 +9,11 @@ export const createExercise = (exercise) => {
     },
     body: JSON.stringify(exercise)
   }).then(
-    response => response.json()
-  ).then(
-    data => {
-      console.log(data);
-      return data.hasOwnProperty("exercise");
+    response => {
+      return response.json().then(data => {
+        console.log(data);
+        return data.hasOwnProperty("exercise");
+      })
     }
   )
 }
