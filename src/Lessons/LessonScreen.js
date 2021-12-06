@@ -22,7 +22,7 @@ export default function LessonScreen() {
   const [label, setLabel] = useState(actualUnitData.name.length <= 0 ? "Nombre de la Unidad Vacio" : actualData.unitNameExist(actualUnitData.name, actualUnitData.id) ? "Nombre de Unidad Repetido" : "Nombre de la Unidad");
   const [openMsgModal, setOpenMsgModal] = useState(false);
   const [msgCorrect, setMsgCorrect] = useState(true);
-  const [message, setMessage] = useState("El nombre de la Unidad no puede estar vacio")
+  const [message, setMessage] = useState("El Nombre de la Unidad no puede estar vacio")
 
   const [subtitle, setSubtitle] = useState(actualUnitData.name);
   const history = useHistory();
@@ -69,6 +69,31 @@ export default function LessonScreen() {
     }, [actualUnitData]
   )
 
+  const headerSubtitle = () => {
+    if (!actualData.published) {
+      return (
+        <TextField
+          required
+          label={label}
+          error={subtitle.length <= 0 ? true : actualData.unitNameExist(subtitle, actualUnitData.id)}
+          style={{width: "30%", marginTop: 0, marginLeft: 50}}
+          inputProps={{style: {fontFamily: 'Montserrat', color: '#203F58', fontWeight: 700}}}
+          size="small"
+          variant="outlined"
+          margin="normal"
+          value={subtitle}
+          onChange={onChangeSubtitle}
+        />
+      )
+    } else {
+      return (
+        <h3 style={{fontFamily: 'Montserrat', color: '#203F58', fontWeight: 700, marginTop: 0, paddingLeft: 52}}>
+          {subtitle}
+        </h3>
+      )
+    }
+  }
+
   const header = () => {
     return (
       <div style={{
@@ -91,18 +116,7 @@ export default function LessonScreen() {
               Desafío {actualData.challenge_id[1]} - {actualData.name}
             </h1>
           </div>
-          <TextField
-            required
-            label={label}
-            error={subtitle.length <= 0 ? true : actualData.unitNameExist(subtitle, actualUnitData.id)}
-            style={{width: "30%", marginTop: 0, marginLeft: 50}}
-            inputProps={{style: {fontFamily: 'Montserrat', color: '#203F58', fontWeight: 700}}}
-            size="small"
-            variant="outlined"
-            margin="normal"
-            value={subtitle}
-            onChange={onChangeSubtitle}
-          />
+          {headerSubtitle()}
         </div>
       </div>
     )
@@ -113,6 +127,12 @@ export default function LessonScreen() {
       <IconButton
         style={{padding: 15, margin: 15, position: 'fixed', bottom: 10, right: 10, backgroundColor: actualColor}}
         onClick={() => {
+          if (label.localeCompare("Nombre de la Unidad") !== 0) {
+            setMsgCorrect(false);
+            setMessage(subtitle.length === 0 ? "El Nombre de la Unidad no puede estar Vacio" : "Ya existe otra Unidad con ese Nombre en este Desafío");
+            setOpenMsgModal(true);
+            return;
+          }
           let next_id = "";
           if (actualUnitData["lessons"].length === 0) {
             next_id = actualData.challenge_id + "U" + (actualData.units.length).toString() + "L1";
