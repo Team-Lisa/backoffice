@@ -81,7 +81,9 @@ export const saveChallenge = (challenge_id, challenge) => {
         },
         body: JSON.stringify(challenge)
     }).then(
-        response => response.json()
+        response => {
+            response.json()
+        }
     ).then(
         data => {
             console.log(data);
