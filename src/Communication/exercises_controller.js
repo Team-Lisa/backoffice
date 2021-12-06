@@ -1,4 +1,4 @@
-const url = 'https://idiomaplay-gateway.herokuapp.com/';
+const url = 'http://idiomaplay-gateway.herokuapp.com/';
 
 export const createExercise = (exercise) => {
   return fetch(url + "exercises", {
