@@ -59,6 +59,7 @@ const ContentManager = () => {
         style={{padding: 15, margin: 15, position: 'fixed', bottom: 10, right: 10, backgroundColor: '#203F58'}}
         onClick={
           async () => {
+            saveChallengeLocalStorage();
             setWaiting(true);
             let next_id = await getNextChallengeId();
             setWaiting(false);
