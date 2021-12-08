@@ -1,8 +1,15 @@
 import Button from "@material-ui/core/Button";
 import React, {useState} from "react";
+import Modal from "react-modal";
 import {Redirect, useHistory} from "react-router-dom";
 import ChallengeModel from "../Models/Challenge";
 import {saveChallenge} from "../Communication/challenge_controller";
+import PublishedModal from "../Challenge/PublishedModal.js";
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 export default function ChallengeTile({color, data, update, saveChallenges}) {
   const history = useHistory();
@@ -14,7 +21,15 @@ export default function ChallengeTile({color, data, update, saveChallenges}) {
     actualData.save()
     history.push('/units')
   };
+  const [publishConfirmation, setPublishConfirmation] = useState(false);
 
+  const handleClickPublishConfirmation = () => {
+    setPublishConfirmation(true);
+  };
+
+  const handlePublishConfirmationClose = () => {
+    setPublishConfirmation(false);
+  };
 
   const publishButton = () => {
     if (actualData.published) {
@@ -26,6 +41,9 @@ export default function ChallengeTile({color, data, update, saveChallenges}) {
           width: 150,
           fontFamily: 'Montserrat',
         }}
+          onClick={
+            handleClickPublishConfirmation
+          }
         >
           Publicado
         </Button>
@@ -39,20 +57,13 @@ export default function ChallengeTile({color, data, update, saveChallenges}) {
           width: 150,
           fontFamily: 'Montserrat'
         }}
-                onClick={
-                  async () => {
-                    actualData.publish();
-                    let data = ChallengeModel.getActualChallengeJSON()
-                    let response = await saveChallenge(actualData.challenge_id, data);
-                    if (!response) {
-                      console.log("error al publicar");
-                    }
-                    setActualData(actualData);
-                    update();
-                  }
-                }>
+          onClick={
+            handleClickPublishConfirmation
+          }
+        >
           Publicar
-        </Button>)
+        </Button>
+        )
     }
   }
 
@@ -88,6 +99,9 @@ export default function ChallengeTile({color, data, update, saveChallenges}) {
             Ver
           </Button>
           {publishButton()}
+        </div>
+        <div>
+          {(publishConfirmation === true) ? <PublishedModal unpublish={actualData.published} data={actualData} update={update} closeModal={setPublishConfirmation} setData={setActualData}/> : null}
         </div>
       </div>
     </div>
