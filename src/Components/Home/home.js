@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import {Redirect} from "react-router-dom";
 import ReactApexChart from "react-apexcharts";
 import "react-datepicker/dist/react-datepicker.css";
-import {registerLocale, setDefaultLocale} from "react-datepicker";
 import {TextField} from "@material-ui/core";
 import {DesktopDatePicker, LocalizationProvider} from "@mui/lab";
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
@@ -21,16 +20,9 @@ const Home = () => {
 
   const filters = () => {
     return (
-      <div style={{display: 'flex', justifyContent: 'space-around'}}>
-        <label style={{display: 'flex', alignItems: 'center'}}>
-          <div style={{
-            fontFamily: 'Montserrat',
-            fontSize: 20,
-            color: "#203F58",
-            marginLeft: 20,
-            marginRight: 20,
-            fontWeight: 700
-          }}>
+      <div style={styles.filterContainer}>
+        <label style={styles.filterLabels}>
+          <div style={styles.filterLabelDiv}>
             Desde:
           </div>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -46,15 +38,8 @@ const Home = () => {
             />
           </LocalizationProvider>
         </label>
-        <label style={{display: 'flex', alignItems: 'center'}}>
-          <div style={{
-            fontFamily: 'Montserrat',
-            fontSize: 20,
-            color: "#203F58",
-            marginLeft: 20,
-            marginRight: 20,
-            fontWeight: 700
-          }}>
+        <label style={styles.filterLabels}>
+          <div style={styles.filterLabelDiv}>
             Hasta:
           </div>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -134,3 +119,22 @@ const Home = () => {
 }
 
 export default Home;
+
+const styles = {
+  filterContainer: {
+    display: 'flex',
+    justifyContent: 'space-around'
+  },
+  filterLabels: {
+    display: 'flex',
+    alignItems: 'center'
+  },
+  filterLabelDiv: {
+    fontFamily: 'Montserrat',
+    fontSize: 20,
+    color: "#203F58",
+    marginLeft: 20,
+    marginRight: 20,
+    fontWeight: 700
+  }
+}
