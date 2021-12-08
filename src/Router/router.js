@@ -55,7 +55,7 @@ const RouterCustom = () => {
                 </NavItem>
               </SideNav.Nav>
             </SideNav>
-            <main style={{paddingLeft: "5%", width: '100%'}}>
+            <main style={{paddingLeft: 80, paddingRight: 30, width: '100%'}}>
               <Route exact path="/" component={Home}/>
               <Route exact path="/login" component={Login}/>
               <Route exact path="/content" component={ContentManager}/>

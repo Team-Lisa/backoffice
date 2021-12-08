@@ -311,16 +311,18 @@ export default function ExercisesScreen() {
     }
 
     if (new_challenge !== "true") {
-      let response_exercises = await saveExercise({
+      saveExercise({
         "lesson_id": actualLessonData["id"],
         "exercise_type": type,
         "question": question,
         "options": options,
         "correct_answer": options[correct - 1],
-      }, exercise_id);
-      if (response_exercises) {
-        saveExerciseLogic(edit, type, options);
-      }
+      }, exercise_id).then((r) => {
+          if (r) {
+            saveExerciseLogic(edit, type, options);
+          }
+        }
+      )
     } else {
       saveExerciseLogic(edit, type, options);
     }
@@ -698,5 +700,5 @@ const styles = {
     backgroundColor: 'rgba(255,255,255,0.9)'
   },
   headerTitle: {fontFamily: 'Work Sans', color: '#203F58', fontSize: 42, marginBottom: 0},
-  headerSubtitle: {fontFamily: 'Montserrat', color: '#203F58', fontWeight: 700, marginTop: 0, paddingLeft: 50}
+  headerSubtitle: {fontFamily: 'Montserrat', color: '#203F58', fontWeight: 700, marginTop: 0, paddingLeft: 52}
 }

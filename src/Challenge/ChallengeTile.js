@@ -11,10 +11,11 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-export default function ChallengeTile({color, data, update}) {
+export default function ChallengeTile({color, data, update, saveChallenges}) {
   const history = useHistory();
   const [actualData, setActualData] = useState(new ChallengeModel(data["name"], data["units"], data["challenge_id"], data["published"]));
   const handleClick = () => {
+    saveChallenges()
     localStorage.setItem("challenge_is_new", "false");
     localStorage.setItem("actualColor", color);
     actualData.save()
