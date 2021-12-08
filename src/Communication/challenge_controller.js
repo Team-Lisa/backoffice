@@ -63,11 +63,16 @@ export const createChallenge = (challenge) => {
         },
         body: JSON.stringify(challenge)
     }).then(
-        response => response.json()
-    ).then(
-        data => {
-            console.log(data);
-            return data.hasOwnProperty("challenge");
+        response => {
+            return response.json().then(
+                data => {
+                    console.log(data);
+                    if (!data.hasOwnProperty("challenge")) {
+                        return data.details.errors
+                    }
+                    return data.hasOwnProperty("challenge");
+                }
+            )         
         }
     )
 }
@@ -82,14 +87,19 @@ export const saveChallenge = (challenge_id, challenge) => {
         body: JSON.stringify(challenge)
     }).then(
         response => {
+            console.log(response)
             return response.json().then(
                 data => {
                     console.log(data);
+                    if (!data.hasOwnProperty("challenge")) {
+                        console.log(data.detail.errors)
+                        return data.detail.errors
+                    }
                     return data.hasOwnProperty("challenge");
                 }
-            )         
+            )       
         }
-    )
+    ).catch(errors => console.log(errors))
 }
 
 export default createLesson;
