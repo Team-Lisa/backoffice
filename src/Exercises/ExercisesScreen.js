@@ -574,15 +574,17 @@ export default function ExercisesScreen() {
   }
 
   const addButtonButton = () => {
-    return (
-      <IconButton
-        style={{padding: 15, margin: 15, position: 'fixed', bottom: 10, right: 10, backgroundColor: '#203F58'}}
-        onClick={() => {
-          setOpenModal(true);
-        }}>
-        <Add fontSize="inherit" style={{height: 30, width: 30, color: '#CEEDE8'}}/>
-      </IconButton>
-    )
+    if ((data.length < 8 && lesson_or_exam !== 'Examen') || (data.length < 16 && lesson_or_exam === 'Examen')) {
+      return (
+        <IconButton
+          style={{padding: 15, margin: 15, position: 'fixed', bottom: 10, right: 10, backgroundColor: '#203F58'}}
+          onClick={() => {
+            setOpenModal(true);
+          }}>
+          <Add fontSize="inherit" style={{height: 30, width: 30, color: '#CEEDE8'}}/>
+        </IconButton>
+      )
+    }
   }
 
   return (

@@ -230,8 +230,8 @@ export default function LessonScreen() {
                     setOpenMsgModal(true);
                   }
                 }
-                // handleBack();
               }
+              localStorage.setItem("challenge_is_new", "false");
             }
           }
         }

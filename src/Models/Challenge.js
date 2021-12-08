@@ -21,6 +21,11 @@ export default class ChallengeModel {
         this.save()
     }
 
+    unpublish(){
+        this.published = false;
+        this.save()
+    }
+
     updateUnitName(unit_id, name){
         for (let i = 0; i < this.units.length; i++) {
             let unit_i = this.units[i];

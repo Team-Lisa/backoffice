@@ -295,8 +295,8 @@ export default function UnitScreen() {
                     setOpenMsgModal(true);
                   }
                 }
-                // handleBack();
               }
+              localStorage.setItem("challenge_is_new", "false");
             }
           }
         }>
