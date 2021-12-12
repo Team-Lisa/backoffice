@@ -146,6 +146,7 @@ const Home = () => {
                 onClick={
                   async () => {
                     let response = await getMetrics(startDate, endDate);
+                    console.log(response);
                     if (!response || response.detail === "internal server error") {
                       console.log("error al publicar");
                       setOpenMsgModal(true);
@@ -264,7 +265,7 @@ const Home = () => {
                 Frecuencia del usuario
               </h3>
               <h2 style={styles.metricData}>
-                {frequency} Días
+                {frequency === -1 ? "No data" : frequency + " Días"}
               </h2>
             </div>
           </div>

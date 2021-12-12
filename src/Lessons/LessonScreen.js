@@ -19,10 +19,10 @@ export default function LessonScreen() {
   const actualColor = localStorage.getItem('actualColor');
   const actualData = ChallengeModel.getActualChallenge();
   const [actualUnitData, setActualUnitData] = useState(JSON.parse(localStorage.getItem('actualUnitData')));
-  const [label, setLabel] = useState(actualUnitData.name.length <= 0 ? "Nombre de la Unidad Vacio" : actualData.unitNameExist(actualUnitData.name, actualUnitData.id) ? "Nombre de Unidad Repetido" : "Nombre de la Unidad");
+  const [label, setLabel] = useState(actualUnitData.name.length <= 0 ? "Nombre de la unidad vacio" : actualData.unitNameExist(actualUnitData.name, actualUnitData.id) ? "Nombre de unidad repetido" : "Nombre de la unidad");
   const [openMsgModal, setOpenMsgModal] = useState(false);
   const [msgCorrect, setMsgCorrect] = useState(true);
-  const [message, setMessage] = useState("El Nombre de la Unidad no puede estar vacio")
+  const [message, setMessage] = useState("El nombre de la unidad no puede estar vacio")
 
   const [subtitle, setSubtitle] = useState(actualUnitData.name);
   const history = useHistory();
@@ -32,12 +32,12 @@ export default function LessonScreen() {
   const onChangeSubtitle = (event) => {
     setSubtitle(event.target.value);
     if (actualData.unitNameExist(event.target.value, actualUnitData.id)) {
-      setLabel("Nombre de Unidad Repetido");
+      setLabel("Nombre de unidad repetido");
     } else {
       if (event.target.value.length <= 0) {
-        setLabel("Nombre de la Unidad Vacio");
+        setLabel("Nombre de la unidad vacio");
       } else {
-        setLabel("Nombre de la Unidad");
+        setLabel("Nombre de la unidad");
       }
     }
     actualUnitData.name = event.target.value;
@@ -54,9 +54,9 @@ export default function LessonScreen() {
   }, [openMsgModal])
 
   const handleBack = () => {
-    if (label.localeCompare("Nombre de la Unidad") !== 0) {
+    if (label.localeCompare("Nombre de la unidad") !== 0) {
       setMsgCorrect(false);
-      setMessage(subtitle.length === 0 ? "El Nombre de la Unidad no puede estar Vacio" : "Ya existe otra Unidad con ese Nombre en este Desafío");
+      setMessage(subtitle.length === 0 ? "El nombre de la unidad no puede estar vacio" : "Ya existe otra unidad con ese nombre en este desafío");
       setOpenMsgModal(true);
       return;
     }
@@ -127,9 +127,9 @@ export default function LessonScreen() {
       <IconButton
         style={{padding: 15, margin: 15, position: 'fixed', bottom: 10, right: 10, backgroundColor: actualColor}}
         onClick={() => {
-          if (label.localeCompare("Nombre de la Unidad") !== 0) {
+          if (label.localeCompare("Nombre de la unidad") !== 0) {
             setMsgCorrect(false);
-            setMessage(subtitle.length === 0 ? "El Nombre de la Unidad no puede estar Vacio" : "Ya existe otra Unidad con ese Nombre en este Desafío");
+            setMessage(subtitle.length === 0 ? "El nombre de la unidad no puede estar vacio" : "Ya existe otra unidad con ese nombre en este desafío");
             setOpenMsgModal(true);
             return;
           }
@@ -176,9 +176,9 @@ export default function LessonScreen() {
         }}
         onClick={
           async () => {
-            if (label.localeCompare("Nombre de la Unidad") !== 0) {
+            if (label.localeCompare("Nombre de la unidad") !== 0) {
               setMsgCorrect(false);
-              setMessage(subtitle.length === 0 ? "El Nombre de la Unidad no puede estar Vacio" : "Ya existe otra Unidad con ese Nombre en este Desafío");
+              setMessage(subtitle.length === 0 ? "El nombre de la unidad no puede estar vacio" : "Ya existe otra unidad con ese nombre en este desafío");
               setOpenMsgModal(true);
               return;
             }

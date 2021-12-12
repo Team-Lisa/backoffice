@@ -33,10 +33,10 @@ export default function UnitScreen() {
     return false;
   }
 
-  const [label, setLabel] = useState(actualData.name.length <= 0 ? "Nombre del Desafío Vacio" : checkChallengesName(actualData.name) ? "Nombre del Desafío Repetido" : "Nombre del Desafío");
+  const [label, setLabel] = useState(actualData.name.length <= 0 ? "Nombre del desafío vacio" : checkChallengesName(actualData.name) ? "Nombre del desafío repetido" : "Nombre del desafío");
   const [openMsgModal, setOpenMsgModal] = useState(false);
   const [msgCorrect, setMsgCorrect] = useState(true);
-  const [message, setMessage] = useState("El Nombre del Desafío no puede estar vacio")
+  const [message, setMessage] = useState("El nombre del desafío no puede estar vacio")
 
   const history = useHistory();
 
@@ -44,12 +44,12 @@ export default function UnitScreen() {
     setSubtitle(event.target.value);
     actualData.name = event.target.value;
     if (checkChallengesName(event.target.value)) {
-      setLabel("Nombre del Desafío Repetido");
+      setLabel("Nombre del desafío repetido");
     } else {
       if (event.target.value.length <= 0) {
-        setLabel("Nombre del Desafío Vacio");
+        setLabel("Nombre del desafío vacio");
       } else {
-        setLabel("Nombre del Desafío");
+        setLabel("Nombre del desafío");
       }
     }
     actualData.save();
@@ -201,9 +201,9 @@ export default function UnitScreen() {
       <IconButton
         style={{padding: 15, margin: 15, position: 'fixed', bottom: 10, right: 10, backgroundColor: actualColor}}
         onClick={() => {
-          if (label.localeCompare("Nombre del Desafío") !== 0) {
+          if (label.localeCompare("Nombre del desafío") !== 0) {
             setMsgCorrect(false);
-            setMessage(subtitle.length === 0 ? "El Nombre del Desafío no puede estar vacio" : "El nombre del Desafío no puede Repetirse");
+            setMessage(subtitle.length === 0 ? "El nombre del desafío no puede estar vacio" : "El nombre del desafío no puede repetirse");
             setOpenMsgModal(true);
             return;
           }
@@ -242,9 +242,9 @@ export default function UnitScreen() {
         }}
         onClick={
           async () => {
-            if (label.localeCompare("Nombre del Desafío") !== 0) {
+            if (label.localeCompare("Nombre del desafío") !== 0) {
               setMsgCorrect(false);
-              setMessage(subtitle.length === 0 ? "El Nombre del Desafío no puede estar vacio" : "El nombre del Desafío no puede Repetirse");
+              setMessage(subtitle.length === 0 ? "El nombre del desafío no puede estar vacio" : "El nombre del desafío no puede repetirse");
               setOpenMsgModal(true);
               return;
             }
