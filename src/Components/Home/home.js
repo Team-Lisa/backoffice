@@ -205,7 +205,7 @@ const Home = () => {
         fontSize: 42,
         paddingTop: 10,
         paddingBottom: 10
-      }}>Dashboard</h1>
+      }}>Métricas</h1>
       <div style={{backgroundColor: 'rgb(250,250,250)', borderRadius: 20, paddingTop: 10}}>
         {filters()}
         <div style={{display: 'flex', width: '100%', justifyContent: 'space-around', paddingTop: 20}}>
