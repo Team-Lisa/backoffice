@@ -54,32 +54,34 @@ const ContentManager = () => {
   }
 
   const addButtonButton = () => {
-    return (
-      <IconButton
-        style={{padding: 15, margin: 15, position: 'fixed', bottom: 10, right: 10, backgroundColor: '#203F58'}}
-        onClick={
-          async () => {
-            saveChallengeLocalStorage();
-            setWaiting(true);
-            let next_id = await getNextChallengeId();
-            setWaiting(false);
-            let challenge = new ChallengeModel("Nuevo Desafio", [], next_id, false);
-            challenge.save();
+    if (challenges.length > 0) {
+      return (
+        <IconButton
+          style={{padding: 15, margin: 15, position: 'fixed', bottom: 10, right: 10, backgroundColor: '#203F58'}}
+          onClick={
+            async () => {
+              saveChallengeLocalStorage();
+              setWaiting(true);
+              let next_id = await getNextChallengeId();
+              setWaiting(false);
+              let challenge = new ChallengeModel("Nuevo Desafio", [], next_id, false);
+              challenge.save();
 
-            let color = getColor(actualColor);
-            localStorage.setItem("challenge_is_new", "true");
-            localStorage.setItem("actualColor", color);
-            localStorage.removeItem("exercises_to_saved");
-            localStorage.removeItem("actualUnitData");
-            localStorage.removeItem("new_unit");
-            localStorage.removeItem("actualLesson");
+              let color = getColor(actualColor);
+              localStorage.setItem("challenge_is_new", "true");
+              localStorage.setItem("actualColor", color);
+              localStorage.removeItem("exercises_to_saved");
+              localStorage.removeItem("actualUnitData");
+              localStorage.removeItem("new_unit");
+              localStorage.removeItem("actualLesson");
 
-            history.push('/units')
-          }
-        }>
-        <Add fontSize="inherit" style={{height: 30, width: 30, color: '#CEEDE8'}}/>
-      </IconButton>
-    )
+              history.push('/units')
+            }
+          }>
+          <Add fontSize="inherit" style={{height: 30, width: 30, color: '#CEEDE8'}}/>
+        </IconButton>
+      )
+    }
   }
 
   const saveButton = () => {
@@ -146,7 +148,8 @@ const ContentManager = () => {
             }
             return (
               <div>
-                <ChallengeTile color={color} key={index} data={value} update={updateChallenges} saveChallenges={saveChallengeLocalStorage}/>
+                <ChallengeTile color={color} key={index} data={value} update={updateChallenges}
+                               saveChallenges={saveChallengeLocalStorage}/>
               </div>
             )
           })}
