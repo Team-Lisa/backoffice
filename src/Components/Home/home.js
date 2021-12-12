@@ -30,9 +30,9 @@ const Home = () => {
   }
 
   const formatTime = (sec_num) => {
-    let hours = Math.floor(sec_num / 3600);
-    let minutes = Math.floor((sec_num - (hours * 3600)) / 60);
-    let seconds = sec_num - (hours * 3600) - (minutes * 60);
+    let hours = Math.round(Math.floor(sec_num / 3600));
+    let minutes = Math.round(Math.floor((sec_num - (hours * 3600)) / 60));
+    let seconds = Math.round(sec_num - (hours * 3600) - (minutes * 60));
 
     if (hours < 10) {
       hours = "0" + hours;
@@ -43,7 +43,7 @@ const Home = () => {
     if (seconds < 10) {
       seconds = "0" + seconds;
     }
-    return minutes + ':' + seconds;
+    return minutes + ':' + seconds
   }
 
   let metricsBetweenDays = function (startDate, endDate, metrics) {
@@ -84,7 +84,7 @@ const Home = () => {
     setUnitsCompleted(unit_completed);
     const time = formatTime(metrics['exam_resolution_time'].time);
     setExamTime(time);
-    setFrequency(metrics['user_frequency'].time);
+    setFrequency(Math.round(metrics['user_frequency'].time * 100) / 100);
   };
 
   const filters = () => {
@@ -259,14 +259,20 @@ const Home = () => {
               <h2 style={styles.metricData}>
                 {examTime}
               </h2>
+              <h3 style={{...styles.metricTitle, padding: 0, margin: 0}}>
+                min:seg
+              </h3>
             </div>
             <div style={styles.metricContainer}>
               <h3 style={styles.metricTitle}>
                 Frecuencia del usuario
               </h3>
               <h2 style={styles.metricData}>
-                {frequency === -1 ? "No data" : frequency + " Días"}
+                {frequency === -1 ? "No data" : frequency}
               </h2>
+              <h3 style={{...styles.metricTitle, padding: 0, margin: 0}}>
+                {frequency === -1 ? "" : "Días"}
+              </h3>
             </div>
           </div>
         </div>
